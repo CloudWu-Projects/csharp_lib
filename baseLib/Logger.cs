@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CSharp_Baselib
+namespace csharp_lib.baseLib
 {
     public class MyLogger : IDisposable
     {

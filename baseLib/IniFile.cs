@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Runtime.InteropServices;
-namespace CSharp_Baselib
+namespace csharp_lib.baseLib
 {
     /// <summary>
     /// INI文件的操作类
