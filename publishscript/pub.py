@@ -36,4 +36,4 @@ print(a)
 
 if a==0:
     from sendMailBase import sendFolder
-    #sendFolder(PublishDir,gitBaseFolder)
+    sendFolder(PublishDir,gitBaseFolder)
