@@ -27,10 +27,12 @@ slnName ,currDir=getSlnFile()
 gitBaseFolder=getGitBaseFolder(currDir)
 print(gitBaseFolder)
 
+projectName= os.path.basename(gitBaseFolder)
+
 PublishDir=os.path.join(currDir,'bin','publish')
 
 print(PublishDir)
-dotnetCommand=f'dotnet publish {slnName} -c Release -p:PublishDir={PublishDir} -r win-x86 --self-contained false -p:PublishSingleFile=true'
+dotnetCommand=f'dotnet publish {slnName} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -r win-x86 --self-contained false -p:PublishSingleFile=true'
 a =os.system(dotnetCommand)
 print(a)
 
