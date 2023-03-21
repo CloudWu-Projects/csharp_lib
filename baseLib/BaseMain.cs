@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace CSharp_Baselib
+namespace csharp_lib.baseLib
 {
     static class BaseMain
     {
