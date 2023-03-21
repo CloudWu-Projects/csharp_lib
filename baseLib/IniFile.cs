@@ -10,10 +10,11 @@ namespace CSharp_Baselib
     {
         public byte[] Path;
         private bool bWriteIni=false;
-        public IniFile(string path)
+        public IniFile()
         {
-            this.Path = getBytes(path);
-            bWriteIni = (!System.IO.File.Exists(path));
+            string _path = ".\\config.ini";
+            this.Path = getBytes(_path);
+            bWriteIni = (!System.IO.File.Exists(_path));
         }
         #region 声明读写INI文件的API函数 
         //[DllImport("kernel32",CharSet=CharSet.Unicode)]
