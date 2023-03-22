@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,6 +23,24 @@ namespace csharp_lib.baseLib
             Logger = MyLogger.GetLogger(logName);
             Logger.Info("=================================================");
             Logger.Info("================START============================");
+        }
+        public static string GetVarName(System.Linq.Expressions.Expression<Func<string, string>> exp)
+        {
+            var a = ((System.Linq.Expressions.MemberExpression)exp.Body);
+
+            var b = a.Expression.Type.FullName+"." + a.Member.Name;
+            return b;
+        }
+        public void loadSQL(string dataSetItem,ref string output)
+        {
+            var path = $"{System.Environment.CurrentDirectory}/{dataSetItem}.sql";
+            Logger.Info($"SQL path: {path}");
+            if (!System.IO.File.Exists(path))
+            {
+                System.IO.File.WriteAllText(path, output, System.Text.Encoding.UTF8);
+            }
+            output = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
+            Logger.Info($"{dataSetItem}: {output}");
         }
         public void Open()
         {
