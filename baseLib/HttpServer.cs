@@ -50,9 +50,10 @@ namespace csharp_lib.baseLib
         {
             httpListener = new HttpListener();
             // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-            //httpListener.Prefixes.Add(string.Format("http://*:{0}/", port));//如果发送到8080 端口没有被处理，则这里全部受理，+是全部接收
+           // httpListener.Prefixes.Add(string.Format("http://*:{0}/", port));//如果发送到8080 端口没有被处理，则这里全部受理，+是全部接收
             httpListener.Prefixes.Add(url);
-            logger.Debug($"startHttp server: {url}");
+            foreach(var a  in httpListener.Prefixes)
+                logger.Debug($"startHttp server: {a.ToString()}");
             router = new Router();
         }
 
@@ -68,9 +69,14 @@ namespace csharp_lib.baseLib
         }
         public void Start()
         {
-            httpListener.Start();//开启服务
-
-            Receive();//异步接收请求
+            try { 
+                httpListener.Start();//开启服务
+                Receive();//异步接收请求
+            }
+            catch(Exception ex)
+            {
+                logger.Error($"{ex.Message}");
+            }
         }
 
         private void Receive()
