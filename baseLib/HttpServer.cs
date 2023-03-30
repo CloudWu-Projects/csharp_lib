@@ -102,16 +102,14 @@ namespace csharp_lib.baseLib
 
                 RouteAction routeAction;
                 Dictionary<string, string> data;
+                Console.WriteLine($"{request.HttpMethod} {request.Url.LocalPath}");
                 if (request.HttpMethod == "POST")
                 {
-
                     if (router.TryGetValue_POST(request.Url.LocalPath, out routeAction, out data))
                     {
                         routeAction(context, data);
-                    }
-                        
+                    }   
                 }
-
                 else if (request.HttpMethod == "GET")
                 {
                     if (router.TryGetValue_GET(request.Url.LocalPath, out routeAction, out data))
@@ -133,13 +131,16 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                logger.Debug($"{ex.StackTrace} {ex.Message}");
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
             try
             {
+                Console.WriteLine($"aaaa-->{request.HttpMethod} {request.Url.LocalPath} {context.Response.StatusCode}");
                 context.Response.Close();
             }
-            catch (Exception ex) { }
+            catch (Exception ex) { 
+                logger.Debug($"{ex.StackTrace} {ex.Message}");}
         }
 
 
