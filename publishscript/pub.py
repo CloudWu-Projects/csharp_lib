@@ -32,6 +32,8 @@ projectName= os.path.basename(gitBaseFolder)
 PublishDir=os.path.join(currDir,'bin','publish')
 
 print(PublishDir)
+import shutil
+shutil.rmtree(PublishDir)
 dotnetCommand=f'dotnet publish {slnName} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -r win-x86 --self-contained false -p:PublishSingleFile=true'
 a =os.system(dotnetCommand)
 print(a)
