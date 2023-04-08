@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -29,6 +30,16 @@ namespace csharp_lib.baseLib
                 loo._className = className;
                 loo.curLogLevel = customLogLevel;
                 loggmap.Add(className, loo);
+                
+                
+            
+                var exePath=Process.GetCurrentProcess().MainModule.FileName;
+                
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
+                Console.WriteLine($"fileVersionInfo  {fileVersionInfo}");
+                string version = fileVersionInfo.ProductVersion;
+                loo.Error($"======start===={version}=================");
+                loo.Error($"======exePath===={exePath}=================");
             }
             return loggmap[className];
         }
