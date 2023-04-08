@@ -1,4 +1,7 @@
 import os
+
+from git import Repo
+
 def getSlnFile():
     currDir=os.path.dirname(__file__)
     slnPath=''
@@ -27,14 +30,21 @@ slnName ,currDir=getSlnFile()
 gitBaseFolder=getGitBaseFolder(currDir)
 print(gitBaseFolder)
 
+repo=Repo(gitBaseFolder)
+shortHash = repo.head.commit.hexsha[:8]
+
 projectName= os.path.basename(gitBaseFolder)
 
 PublishDir=os.path.join(currDir,'bin','publish')
 
 print(PublishDir)
 import shutil
-shutil.rmtree(PublishDir)
-dotnetCommand=f'dotnet publish {slnName} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -r win-x86 --self-contained false -p:PublishSingleFile=true'
+try:
+    shutil.rmtree(PublishDir)
+except:
+    pass
+
+dotnetCommand=f'dotnet publish {slnName} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} --version-suffix {shortHash} -r win-x86 --self-contained false -p:PublishSingleFile=true'
 a =os.system(dotnetCommand)
 print(a)
 
