@@ -1,9 +1,13 @@
 import os
 
 from git import Repo
+import pathlib
+
 
 def getSlnFile():
     currDir=os.path.dirname(__file__)
+    currDir = pathlib.Path(__file__).parent.resolve()
+    currDir= str(currDir)
     slnPath=''
     while len(currDir)>4:        
         all_file = os.listdir(currDir)
