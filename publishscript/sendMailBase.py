@@ -4,8 +4,25 @@ from email.mime.application import MIMEApplication
 
 import smtplib
 
-
-import Emailconfig
+try:
+    import Emailconfig
+    # 输入Email地址和口令:
+    from_addr = Emailconfig.from_addr
+    password = Emailconfig.password
+    # 输入收件人地址:
+    to_addr = Emailconfig.to_addr
+    # 输入SMTP服务器地址:
+    smtp_server = Emailconfig.smtp_server
+except ImportError:
+    import os
+    Emailconfig = None
+    # 输入Email地址和口令:
+    from_addr = '13348926569@189.cn' #os.getenv('from_addr')
+    password = os.getenv('password')
+    # 输入收件人地址:
+    to_addr = "daiybh@qq.com,3305295410@qq.com" #os.getenv('to_addr')
+    # 输入SMTP服务器地址:
+    smtp_server = 'smtp.189.cn' #os.getenv('smtp_server')
 
 
 import os,io
@@ -16,13 +33,6 @@ from git import Repo
 def sendMail_Zip(z,projectMsg,projectDir='./'):
     
     print("send starting....")
-    # 输入Email地址和口令:
-    from_addr = Emailconfig.from_addr
-    password = Emailconfig.password
-    # 输入收件人地址:
-    to_addr = Emailconfig.to_addr
-    # 输入SMTP服务器地址:
-    smtp_server = Emailconfig.smtp_server
 
     import time
 		
