@@ -56,7 +56,7 @@ def sendMail_Zip(z,projectMsg,projectDir='./'):
     m['Subject']='proect :{0} {1}'.format(headcommit.message,zip_name)
 
     server = smtplib.SMTP(smtp_server, 25) # SMTP协议默认端口是25
-    server.set_debuglevel(1)
+    #server.set_debuglevel(1)
     print(f"from_addr:{from_addr}  password:{ password}")
     server.login(from_addr, password)
     server.sendmail(from_addr, to_addr.split(','), m.as_string())
