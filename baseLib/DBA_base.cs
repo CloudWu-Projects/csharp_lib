@@ -82,6 +82,20 @@ namespace csharp_lib.baseLib
             int i = cmd.ExecuteNonQuery();
         }
 
+        public SqlDataReader ExecuteReader(string sql)
+        {
+            Logger.Debug($"sql  {sql}");
+            using var cmd = new SqlCommand(sql, conn);
+            return  cmd.ExecuteReader();
+        }
+        public int ExcuteNonQuery(string sql)
+        {
+            Logger.Debug($"sql  {sql}");
+            using var cmd = new SqlCommand(sql, conn);
+            int i = cmd.ExecuteNonQuery();
+            Logger.Debug($"ExcuteNonQuery={i} [{sql}]");
+            return i;
+        }
         public string convertPlateTypeFromColor(string colorText)
         {
             if (colorText == "蓝色") return "2";
