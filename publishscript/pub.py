@@ -36,8 +36,9 @@ print(gitBaseFolder)
 
 repo=Repo(gitBaseFolder)
 shortHash = repo.head.commit.hexsha[:8]
+projectName = repo.head.ref.name
 
-projectName= os.path.basename(gitBaseFolder)
+#projectName= os.path.basename(gitBaseFolder)
 
 PublishDir=os.path.join(currDir,'bin','publish')
 
