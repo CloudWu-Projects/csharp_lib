@@ -50,7 +50,7 @@ except:
     pass
 
 dotnetCommand=f'dotnet publish {slnName} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} --version-suffix {shortHash} -r win-x86 --self-contained false -p:PublishSingleFile=true'
-print(dotnetCommand)
+
 a =os.system(dotnetCommand)
 print(a)
 
