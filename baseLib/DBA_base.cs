@@ -33,10 +33,15 @@ namespace csharp_lib.baseLib
         }
         public void loadSQL(string dataSetItem,ref string output)
         {
-            var path = $"{System.Environment.CurrentDirectory}/{dataSetItem}.sql";
+            var sqlFolder = $"{System.Environment.CurrentDirectory}/sql";
+            var path = $"{sqlFolder}/{dataSetItem}.sql";
             Logger.Info($"SQL path: {path}");
             if (!System.IO.File.Exists(path))
             {
+                try { 
+                    System.IO.Directory.CreateDirectory(sqlFolder);
+                }
+                catch (Exception es) { }
                 System.IO.File.WriteAllText(path, output, System.Text.Encoding.UTF8);
             }
             output = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
