@@ -32,7 +32,6 @@ namespace csharp_lib.baseLib
             {
                 Console.WriteLine("only a single instance can run in a time");
                 throw new Exception("only a single instance can run in a time");
-                return false;
             }
             Console.Title = titleName;            
             IntPtr consoleHandle = GetStdHandle(STD_INPUT_HANDLE);
