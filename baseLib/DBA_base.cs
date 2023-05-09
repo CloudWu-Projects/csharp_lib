@@ -171,7 +171,6 @@ namespace csharp_lib.baseLib
             if (colorText == "其他")
                 return "5";
             return "0";
-            return colorText;
         }
 
         public string getDBString(object ob)
