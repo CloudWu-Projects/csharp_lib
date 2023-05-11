@@ -192,7 +192,8 @@ namespace csharp_lib.baseLib
         public string getDBString(object ob)
         {
             if (ob == null || ob == DBNull.Value) return "";
-            return (string)ob;
+            var b =string.Format("{0}", ob);
+            return b;            
         }
         public int getDBInt(object ob)
         {
@@ -206,11 +207,34 @@ namespace csharp_lib.baseLib
         }
         public long getDBDatetimestamp(object ob)
         {
+            var aa = typeof(object);
             //2016-12-12 12:11:20,
             if (ob == null || ob == DBNull.Value) return 0;
             var timeStamp = new DateTimeOffset(Convert.ToDateTime(ob)).ToUnixTimeSeconds();
 
             return timeStamp;
+        }
+
+        public void getDBValue<T>(object ob,ref T t1)
+        {
+            //2016-12-12 12:11:20,
+            if (ob == null || ob == DBNull.Value)
+            {
+                return ;
+            }
+            var value = string.Format("{0}", ob);
+            if (typeof(T) == typeof(string))
+            {
+                t1 = (T)(object)value;                
+            }
+            else if (typeof(T) == typeof(int))
+            {
+                t1= (T)(object)int.Parse(value);
+            }
+            else if (typeof(T) == typeof(long))
+            {
+                t1 = (T)(object)long.Parse(value);
+            }         
         }
         public string getString(object value)
         {
