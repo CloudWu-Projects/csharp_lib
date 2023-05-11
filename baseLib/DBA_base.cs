@@ -89,17 +89,33 @@ namespace csharp_lib.baseLib
 
         public SqlDataReader ExecuteReader(string sql)
         {
-            Logger.Debug($"sql  {sql}");
-            using var cmd = new SqlCommand(sql, conn);
-            return  cmd.ExecuteReader();
+            try
+            {
+                Logger.Debug($"sql  {sql}");
+                using var cmd = new SqlCommand(sql, conn);
+                return cmd.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ExecuteReader exception \n {ex.Message}\n {ex.StackTrace}");
+                throw;
+            }
         }
         public int ExcuteNonQuery(string sql)
         {
-            Logger.Debug($"sql  {sql}");
-            using var cmd = new SqlCommand(sql, conn);
-            int i = cmd.ExecuteNonQuery();
-            Logger.Debug($"ExcuteNonQuery={i} [{sql}]");
-            return i;
+            try
+            {
+                Logger.Debug($"sql  {sql}");
+                using var cmd = new SqlCommand(sql, conn);
+                int i = cmd.ExecuteNonQuery();
+                Logger.Debug($"ExcuteNonQuery={i} [{sql}]");
+                return i;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ExcuteNonQuery exception \n {ex.Message}\n {ex.StackTrace}");
+                throw;
+            }
         }
         public string convertPlateTypeFromColor(string colorText)
         {
