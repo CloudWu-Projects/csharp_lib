@@ -6,6 +6,7 @@ using wu_jiaxing20220115;
 using System.Security.Policy;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace csharp_lib.baseLib
 {
@@ -56,14 +57,16 @@ namespace csharp_lib.baseLib
                 logger.Debug($"startHttp server: {a.ToString()}");
             router = new Router();
         }
-
+        string defaultRouterHtml = "";
         public ServerHelper AddPostHandler(String param1, RouteAction param2)
         {
+            defaultRouterHtml += $"<li> POST:<a href={param1}>{param1}</a> </li>";
             router.AddPOST(param1, param2);
             return this;
         }
         public ServerHelper AddGetHandler(String param1, RouteAction param2)
         {
+            defaultRouterHtml += $"<li> GET:<a href={param1}>{param1}</a> </li>";
             router.AddGET(param1, param2);
             return this;
         }
@@ -112,6 +115,19 @@ namespace csharp_lib.baseLib
                 }
                 else if (request.HttpMethod == "GET")
                 {
+                    if (string.Equals(request.Url.LocalPath, "/"))
+                    {
+                        var response = context.Response;
+                        response.StatusCode = (int)HttpStatusCode.OK;
+                        response.ContentType = "text/html";
+                        using(var writer = new StreamWriter(response.OutputStream,Encoding.UTF8))
+                        {
+                            writer.Write(defaultRouterHtml);
+                            writer.Close();
+                            response.Close();
+                            return;
+                        }
+                    }
                     if (router.TryGetValue_GET(request.Url.LocalPath, out routeAction, out data))
                     {
                         routeAction(context, data);
