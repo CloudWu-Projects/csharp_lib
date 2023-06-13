@@ -29,6 +29,25 @@ import os,io
 import zipfile
 import socket
 
+def sendMail_FILE(title,content,file):
+    msg = MIMEMultipart()
+    part_text = MIMEText(content)
+    msg.attach(part_text)
+
+    part_attach = MIMEApplication(open(file,'rb').read())    
+    part_attach.add_header('Content-Disposition','attachment',filename=file)
+    msg.attach(part_attach)
+
+    msg['Subject'] = title
+    msg['From'] = from_addr
+    server = smtplib.SMTP(smtp_server, 25) # SMTP协议默认端口是25
+    #server.set_debuglevel(1)
+    print(f"from_addr:{from_addr}  password:{ password}")
+    server.login(from_addr, password)
+    server.sendmail(from_addr, to_addr.split(','), msg.as_string())
+    server.quit()
+    print("send over")
+
 from git import Repo
 def sendMail_Zip(z,projectMsg,projectDir='./'):
     
