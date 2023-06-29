@@ -91,7 +91,7 @@ namespace csharp_lib.baseLib
         {
             try
             {
-                Logger.Debug($"sql  {sql}");
+                Logger.Debug($"ExecuteReader sql  {sql}");
                 using var cmd = new SqlCommand(sql, conn);
                 return cmd.ExecuteReader();
             }
@@ -101,11 +101,29 @@ namespace csharp_lib.baseLib
                 throw;
             }
         }
+        public int ExcuteProcedure(string proceDureName)
+        {
+            try
+            {
+                Logger.Debug($"ExcuteProcedure {proceDureName}");
+                SqlCommand aCommand = new SqlCommand(proceDureName, conn);
+                aCommand.CommandType = CommandType.StoredProcedure;
+                int i= aCommand.ExecuteNonQuery();
+
+                Logger.Debug($"ExcuteProcedure={i} [{proceDureName}]");
+                return i;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ExcuteNonQuery exception \n {ex.Message}\n {ex.StackTrace}");
+                throw;
+            }
+        }
         public int ExcuteNonQuery(string sql)
         {
             try
             {
-                Logger.Debug($"sql  {sql}");
+                Logger.Debug($"ExcuteNonQuery sql  {sql}");
                 using var cmd = new SqlCommand(sql, conn);
                 int i = cmd.ExecuteNonQuery();
                 Logger.Debug($"ExcuteNonQuery={i} [{sql}]");
