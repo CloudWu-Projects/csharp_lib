@@ -32,8 +32,7 @@ namespace csharp_lib.baseLib
             {
                 Console.WriteLine("only a single instance can run in a time");
                 throw new Exception("only a single instance can run in a time");
-            }
-            Console.Title = titleName;            
+            }         
             IntPtr consoleHandle = GetStdHandle(STD_INPUT_HANDLE);
             // get current console mode
             uint consoleMode;
@@ -42,6 +41,7 @@ namespace csharp_lib.baseLib
                 // ERROR: Unable to get console mode.
                 return false;
             }
+            Console.Title = titleName;
             // Clear the quick edit bit in the mode flags
             consoleMode &= ~ENABLE_QUICK_EDIT;
             // set the new mode
