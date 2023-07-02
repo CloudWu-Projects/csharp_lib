@@ -47,11 +47,11 @@ namespace csharp_lib.baseLib
             output = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
             Logger.Info($"{dataSetItem}: {output}");
         }
-        public void Open(string dbServer,string dbUserName,string dbPassword)
+        public void Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
             try
             {
-                var cs = $@"Data Source={dbServer};Initial Catalog=property;User ID={dbUserName};Password={dbPassword}";
+                var cs = $@"Data Source={dbServer};Initial Catalog={dbName};User ID={dbUserName};Password={dbPassword}";
                 Logger.Info($"Db Connectstr :{cs}");
                 var stm = "SELECT @@VERSION";
                 conn = new SqlConnection(cs);
