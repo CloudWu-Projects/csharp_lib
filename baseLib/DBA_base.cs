@@ -16,6 +16,7 @@ namespace csharp_lib.baseLib
     {
         public MyLogger Logger = null;
         public SqlConnection conn;
+        public bool isConnected = false;
         public DBA_base(string logName)
         {
             // Targets where to log to: File and Console
@@ -47,8 +48,10 @@ namespace csharp_lib.baseLib
             output = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
             Logger.Info($"{dataSetItem}: {output}");
         }
-        public void Open(string dbServer,string dbName,string dbUserName,string dbPassword)
+        public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
+            if (!isConnected)
+                return false;
             try
             {
                 var cs = $@"Data Source={dbServer};Initial Catalog={dbName};User ID={dbUserName};Password={dbPassword}";
@@ -59,11 +62,14 @@ namespace csharp_lib.baseLib
                 using var cmd = new SqlCommand(stm, conn);
                 string version = cmd.ExecuteScalar().ToString();
                 Logger.Info($"SQL version:{version}");
+                isConnected = true;
             }
             catch (Exception ex)
             {
                 Logger.Error($"exception {ex.Message}\n{ex.StackTrace}");
+                isConnected= false;
             }
+            return isConnected;
         }
         public void doUPdatePICURL_insidec(string carplate, string keyName, string url)
         {
