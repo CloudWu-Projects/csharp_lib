@@ -50,7 +50,7 @@ namespace csharp_lib.baseLib
         }
         public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
-            if (!isConnected)
+            if (isConnected)
                 return false;
             try
             {
