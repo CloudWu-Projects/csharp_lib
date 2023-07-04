@@ -51,7 +51,7 @@ namespace csharp_lib.baseLib
         public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
             if (isConnected)
-                return false;
+                return true;
             try
             {
                 var cs = $@"Data Source={dbServer};Initial Catalog={dbName};User ID={dbUserName};Password={dbPassword}";
