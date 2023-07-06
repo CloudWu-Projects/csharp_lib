@@ -239,27 +239,74 @@ namespace csharp_lib.baseLib
             return timeStamp;
         }
 
-        public void getDBValue<T>(object ob,ref T t1)
+        public void getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
         {
             //2016-12-12 12:11:20,
+            var ob = rdr[fieldName];
             if (ob == null || ob == DBNull.Value)
             {
                 return ;
             }
             var value = string.Format("{0}", ob);
-            if (typeof(T) == typeof(string))
+            try
             {
-                t1 = (T)(object)value;                
+                if (typeof(T) == typeof(string))
+                {
+                    t1 = (T)(object)value;
+                }
+                else if (typeof(T) == typeof(int) || typeof(T) == typeof(long))
+                {
+                    if (ob.GetType() == typeof(System.DateTime))
+                    {
+                        var timeStamp = new DateTimeOffset(Convert.ToDateTime(ob)).ToUnixTimeSeconds();
+                        t1 = (T)(object)timeStamp;
+                    }
+                    else
+                    {
+                        if (typeof(T) == typeof(int))
+                            t1 = (T)(object)int.Parse(value);
+                        else
+                            t1 = (T)(object)long.Parse(value);
+                    }
+                }
+
             }
-            else if (typeof(T) == typeof(int))
+            catch (Exception ex)
             {
-                t1= (T)(object)int.Parse(value);
+                Logger.Error($" getDBValue({ob.GetType()} fieldName:{fieldName} value={value} {outKeyName} {typeof(T)}");
+                throw ex;
             }
-            else if (typeof(T) == typeof(long))
-            {
-                t1 = (T)(object)long.Parse(value);
-            }         
         }
+        public void getDBValue<T>(object ob, ref T t1)
+        {
+            //2016-12-12 12:11:20,
+            if (ob == null || ob == DBNull.Value)
+            {
+                return;
+            }
+            var value = string.Format("{0}", ob);
+            try
+            {
+                if (typeof(T) == typeof(string))
+                {
+                    t1 = (T)(object)value;
+                }
+                else if (typeof(T) == typeof(int))
+                {
+                    t1 = (T)(object)int.Parse(value);
+                }
+                else if (typeof(T) == typeof(long))
+                {
+                    t1 = (T)(object)long.Parse(value);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($" getDBValue value={value}  {typeof(T)}");
+                throw ex;
+            }
+        }
+
         public string getString(object value)
         {
             if (value == DBNull.Value) return "";
