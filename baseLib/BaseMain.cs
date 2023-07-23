@@ -23,9 +23,11 @@ namespace csharp_lib.baseLib
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         public static Mutex  mutex;
-        internal static bool Go()
+        internal static bool Go(string specailEventName=null)
         {
             string titleName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            if(specailEventName!=null)
+                titleName = specailEventName;
             bool createNew;
             mutex = new Mutex(true, titleName, out createNew);
             if (!createNew)
