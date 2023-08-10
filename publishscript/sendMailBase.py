@@ -111,7 +111,6 @@ def sendFolder(folderPath,projectDir):
         return
     print(F"{folderPath}  exists")
     ziplist=[]
-
     for dir,subdirs,files in os.walk(folderPath):
         if "logs" in subdirs:
             subdirs.remove("logs")
@@ -122,23 +121,38 @@ def sendFolder(folderPath,projectDir):
             files.remove("config.ini")
             
         for fileItem in files:
-            ziplist.append(os.path.join(dir,fileItem))
+            ziplist.append(os.path.join(dir,fileItem))            
         for dirItem in subdirs:
             ziplist.append(os.path.join(dir,dirItem))
     
-    print(ziplist)
-    
-    in_memory_zip = io.BytesIO()
+    usePyminizip=False
+    try:
+        import pyminizip
+        usePyminizip=True
+    except:
+        pass
 
-    #in_memory_zip="c:\\logs\\aa.zip"
-    #zipfile.ZipFile.setpassword(pwd=b"147258369")
+    if usePyminizip==False:
+        in_memory_zip = io.BytesIO()
+    else:
+        in_memory_zip="./publish.zip"
+    
     z = zipfile.ZipFile(in_memory_zip,'w',zipfile.ZIP_DEFLATED)
-    z.setpassword(b'123456')
+    
     for i in ziplist:
         z.write(i,i.replace(folderPath,''))
     z.close()
 
+    if usePyminizip:    
+        pyminizip.compress(in_memory_zip,None, "./output.zip", "GFG123456", 5)
+        in_memory_zip = io.BytesIO(open("./output.zip",'rb').read())    
+
+
     hostName=socket.gethostname()
     projectMsg=f"codesPath:{projectDir} \n codePC:{hostName} {socket.gethostbyname(hostName)}"
-    projectMsg+=f'\n zip password : 123456'
+    projectMsg+=f'\n zip password : GFG123456'
     sendMail_Zip(in_memory_zip,projectMsg=projectMsg,projectDir=projectDir)
+
+    if usePyminizip:
+        os.remove("./output.zip")
+        os.remove("./publish.zip")
