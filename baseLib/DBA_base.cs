@@ -252,7 +252,13 @@ namespace csharp_lib.baseLib
             {
                 if (typeof(T) == typeof(string))
                 {
-                    t1 = (T)(object)value;
+                    if(ob.GetType() == typeof(System.DateTime))
+                    {
+                        DateTime otime = Convert.ToDateTime(ob);
+                        t1 = (T)(object)otime.ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                    else
+                        t1 = (T)(object)value;
                 }
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(long))
                 {
