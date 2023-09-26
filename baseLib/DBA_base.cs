@@ -48,6 +48,25 @@ namespace csharp_lib.baseLib
             output = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
             Logger.Info($"{dataSetItem}: {output}");
         }
+        public int getcount_bySQL(string sql)
+        {
+            int result = -1;
+            try
+            {
+                using (var reader = ExecuteReader(sql))
+                {
+                    if (reader.Read() && reader.HasRows)
+                    {
+                        result = reader.GetInt32(0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"{sql} Exception " + ex.Message + "\n" + ex.StackTrace);
+            }
+            return result;
+        }
         public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
             if (isConnected)
