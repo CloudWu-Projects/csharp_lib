@@ -126,7 +126,7 @@ namespace csharp_lib.baseLib
                 throw;
             }
         }
-        public int ExcuteProcedure(string proceDureName)
+        public int ExcuteProcedure_nonQuery(string proceDureName)
         {
             try
             {
@@ -144,6 +144,32 @@ namespace csharp_lib.baseLib
                 throw;
             }
         }
+        public int ExcuteProcedure_withResult(string proceDureName)
+        {
+            try
+            {
+                Logger.Debug($"ExcuteProcedure_withResult {proceDureName}");
+                SqlCommand aCommand = new SqlCommand(proceDureName, conn);
+                aCommand.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter returnValueParam = new SqlParameter();
+                returnValueParam.ParameterName = "@returnValue";
+                returnValueParam.Direction = ParameterDirection.ReturnValue;
+                aCommand.Parameters.Add( returnValueParam );
+
+                int i = aCommand.ExecuteNonQuery();
+                int rv = (int)aCommand.Parameters["@returnValue"].Value;
+
+                Logger.Debug($"ExcuteProcedure_withResult={i} [{proceDureName}]");
+                return i;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ExcuteProcedure_withResult exception \n {ex.Message}\n {ex.StackTrace}");
+                throw;
+            }
+        }
+
         public int ExcuteNonQuery(string sql)
         {
             try
