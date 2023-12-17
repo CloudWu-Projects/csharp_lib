@@ -291,14 +291,25 @@ namespace csharp_lib.baseLib
 
             return timeStamp;
         }
+        public bool try_getDBValue<T>(SqlDataReader rdr, string fieldName, ref T t1, string outKeyName)
+        {
+            try
+            {
+                return getDBValue(rdr, fieldName,ref t1, outKeyName);
+            }
+            catch (Exception ex)
+            {
 
-        public void getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
+            }
+            return false;
+        }
+        public bool getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
         {
             //2016-12-12 12:11:20,
             var ob = rdr[fieldName];
             if (ob == null || ob == DBNull.Value)
             {
-                return ;
+                return false ;
             }
             var value = string.Format("{0}", ob);
             try
@@ -334,7 +345,9 @@ namespace csharp_lib.baseLib
             {
                 Logger.Error($" getDBValue({ob.GetType()} fieldName:{fieldName} value={value} {outKeyName} {typeof(T)}");
                 throw ex;
+                return false;
             }
+            return true ;
         }
         public void getDBValue<T>(object ob, ref T t1)
         {
