@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using Org.BouncyCastle.Utilities;
 namespace csharp_lib.baseLib
 {
     /// <summary>
@@ -10,11 +11,36 @@ namespace csharp_lib.baseLib
     {
         public byte[] Path;
         private bool bWriteIni=false;
+
+        bool isUtf8Bom(byte[] bytes)
+        {
+            return (bytes.Length>=3)&&bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
+        }
+        byte[] RemoveUtf8Bom(byte[] bytes)
+        {
+            return bytes[3..];
+        }
+         void ConvertIniFileToUTF8(string filePath)
+        {
+            byte[]fileBytes = File.ReadAllBytes(filePath);
+
+            if(isUtf8Bom(fileBytes))
+            {
+                byte[] utf8Bytes = RemoveUtf8Bom(fileBytes);
+                string utf8Str = Encoding.UTF8.GetString(utf8Bytes);
+                File.WriteAllText(filePath, utf8Str);
+            }
+        }
+
         public IniFile()
         {
             string _path = ".\\config.ini";
             this.Path = getBytes(_path);
             bWriteIni = (!System.IO.File.Exists(_path));
+            if(System.IO.File.Exists(_path) )
+            {
+                ConvertIniFileToUTF8(_path);
+            }
         }
         #region 声明读写INI文件的API函数 
         //[DllImport("kernel32",CharSet=CharSet.Unicode)]
