@@ -21,9 +21,18 @@ namespace csharp_lib.baseLib
         {
             // Targets where to log to: File and Console
 
-            Logger = MyLogger.GetLogger(logName);
+            Init(MyLogger.GetLogger(logName));
+        }
+
+        public DBA_base(MyLogger _logger)
+        {
+            Init(_logger);
+        }
+        void Init(MyLogger _logger)
+        {
+            Logger = _logger;
             Logger.Info("=================================================");
-            Logger.Info("================START============================");
+            Logger.Info("===============DBA_base=START============================");
         }
         public static string GetVarName(System.Linq.Expressions.Expression<Func<string, string>> exp)
         {
