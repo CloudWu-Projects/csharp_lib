@@ -2,6 +2,7 @@
 using System.Text;
 using System.Runtime.InteropServices;
 using Org.BouncyCastle.Utilities;
+using System.IO;
 namespace csharp_lib.baseLib
 {
     /// <summary>
