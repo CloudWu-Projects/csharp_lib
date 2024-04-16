@@ -25,7 +25,7 @@ namespace csharp_lib.baseLib
             }
             return null;
         }
-        public static string Compress_and_Base64String(string ImageFileName, int quality)
+        public static string Compress_and_Base64String(string ImageFileName, int quality ,MyLogger myLogger = null)
         {
             try
             {
@@ -39,7 +39,13 @@ namespace csharp_lib.baseLib
                 return Convert.ToBase64String(arr);
 
             }
-            catch (Exception ex) { }
+            catch (Exception ex) { 
+                myLogger?.Error($"CompressImage failed.:{ImageFileName}");
+                myLogger?.Error($"CompressImage exception: {ex.ToString()}");
+                myLogger?.Error($"CompressImage exception: {ex.StackTrace}");
+                myLogger?.Error($"CompressImage exception: {ex.Message}");
+
+            }
             return null;
         }
         // 图片压缩方法
