@@ -25,64 +25,36 @@ namespace csharp_lib.baseLib
             }
             return null;
         }
-        public static string Compress_and_Base64String(string ImageFileName, int quality ,MyLogger myLogger = null)
+        public static string ConvertImageToBase64WithQuality(string imagePath, long quality,MyLogger logger)
         {
-            try
+            try { 
+            Image image = Image.FromFile(imagePath);
+            using (MemoryStream ms = new MemoryStream())
             {
-                Bitmap bmp = CompressImage(ImageFileName, quality);
-                MemoryStream ms = new MemoryStream();
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                byte[] arr = new byte[ms.Length];
-                ms.Position = 0;
-                ms.Read(arr, 0, (int)ms.Length);
-                ms.Close();
-                return Convert.ToBase64String(arr);
+                // Create encoder parameters for setting the quality
+                EncoderParameters encoderParameters = new EncoderParameters(1);
+                encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
 
-            }
-            catch (Exception ex) { 
-                myLogger?.Error($"CompressImage failed.:{ImageFileName}");
-                myLogger?.Error($"CompressImage exception: {ex.ToString()}");
-                myLogger?.Error($"CompressImage exception: {ex.StackTrace}");
-                myLogger?.Error($"CompressImage exception: {ex.Message}");
+                // Get the JPEG codec info
+                ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
 
+                // Save the image to the memory stream with specified quality
+                image.Save(ms, jpegCodec, encoderParameters);
+
+                // Convert the image bytes to a base64 string
+                byte[] imageBytes = ms.ToArray();
+                string base64String = Convert.ToBase64String(imageBytes);
+
+                return base64String;
+                }
+            }catch(Exception ex)
+            {
+                logger?.Error($"ConvertImageToBase64WithQuality failed.:{imagePath}");
+                logger?.Error($"ConvertImageToBase64WithQuality exception: {ex.ToString()}");
             }
             return null;
         }
-        // 图片压缩方法
-        static Bitmap CompressImage(string sourceImagePath, int quality)
-        {
-            // 加载原始图片
-            using (Bitmap sourceImage = new Bitmap(sourceImagePath))
-            {
-                // 创建保存参数
-                EncoderParameters encoderParameters = new EncoderParameters(1);
-                encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, quality); // 设置压缩质量，范围从0到100
 
-                // 获取 JPEG 编码器
-                ImageCodecInfo jpegEncoder = GetEncoder(ImageFormat.Jpeg);
-
-                // 创建一个新的 Bitmap 对象，作为压缩后的图片
-                Bitmap compressedImage = new Bitmap(sourceImage.Width, sourceImage.Height);
-
-                // 使用 Graphics 对象绘制压缩后的图片
-                using (Graphics graphics = Graphics.FromImage(compressedImage))
-                {
-                    graphics.DrawImage(sourceImage, 0, 0, sourceImage.Width, sourceImage.Height);
-                }
-
-                // 将压缩参数应用于压缩后的图片
-                MemoryStream memoryStream = new MemoryStream();
-                compressedImage.Save(memoryStream, jpegEncoder, encoderParameters);
-
-                // 从内存流中创建最终的压缩图片对象
-                Bitmap finalCompressedImage = new Bitmap(memoryStream);
-
-                // 释放内存流资源
-                memoryStream.Dispose();
-
-                return finalCompressedImage;
-            }
-        }
 
         // 获取指定图像格式的编码器
         private static ImageCodecInfo GetEncoder(ImageFormat format)
