@@ -304,12 +304,17 @@ namespace csharp_lib.baseLib
         {
             try
             {
-                return getDBValue(rdr, fieldName,ref t1, outKeyName);
+                if (getDBValue(rdr, fieldName, ref t1, outKeyName))
+                {
+                    return true;
+                }
             }
             catch (Exception ex)
             {
-
+                Logger.Error($"try_getDBValue exception \n {ex.Message}\n {ex.StackTrace}");
             }
+            Logger.Debug($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
+            throw new Exception($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
             return false;
         }
         public bool getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
