@@ -6,7 +6,7 @@ namespace csharp_lib.baseLib
 {
     class ImgToBase64
     {
-        static public string toBase64String(string ImageFileName)
+        static public string toBase64String(string ImageFileName,MyLogger logger)
         {
             try
             {
@@ -20,10 +20,10 @@ namespace csharp_lib.baseLib
                 return Convert.ToBase64String(arr);
             }catch(Exception ex)
             {
-                //Program.Logger.Error("toBase64String failed.:{0}",ImageFileName);
-                //Program.Logger.Error("toBase64String exception: {0}", ex.ToString());
+                logger?.Error($"toBase64String exception: {ImageFileName}");
+                logger?.Error($"toBase64String exception: {ex.ToString()}");
+                throw ex;
             }
-            return null;
         }
         public static string ConvertImageToBase64WithQuality(string imagePath, long quality,MyLogger logger)
         {
