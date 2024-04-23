@@ -76,6 +76,7 @@ namespace csharp_lib.baseLib
             }
             return result;
         }
+
         public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
             if (isConnected)
@@ -98,27 +99,6 @@ namespace csharp_lib.baseLib
                 isConnected= false;
             }
             return isConnected;
-        }
-        public void doUPdatePICURL_insidec(string carplate, string keyName, string url)
-        {
-            var sql = $@" update insidec set {keyName}='{url}' where  carplate='{carplate}'";
-            Logger.Debug($"sql  {sql}");
-            using var cmd = new SqlCommand(sql, conn);
-            int i = cmd.ExecuteNonQuery();
-        }
-        public void doUPdatePICURL_insideP(int id, string keyName, string url)
-        {
-            var sql = $@" update InsideP set {keyName}='{url}' where  id={id}";
-            Logger.Debug($"sql  {sql}");
-            using var cmd = new SqlCommand(sql, conn);
-            int i = cmd.ExecuteNonQuery();
-        }
-        public void doUPdatePICURL_Park_Pic(int id, string keyName, string url)
-        {
-            var sql = $@" update Park_Pic set {keyName}='{url}' where  parked_id={id}";
-            Logger.Debug($"sql  {sql}");
-            using var cmd = new SqlCommand(sql, conn);
-            int i = cmd.ExecuteNonQuery();
         }
 
         public SqlDataReader ExecuteReader(string sql)
