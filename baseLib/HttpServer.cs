@@ -81,7 +81,12 @@ namespace csharp_lib.baseLib
                 logger.Error($"{ex.Message}");
             }
         }
+        public void Stop()
+        {
+            httpListener.Stop();
+            logger?.Dispose();
 
+        }
         private void Receive()
         {
             httpListener.BeginGetContext(new AsyncCallback(EndReceive), null);
