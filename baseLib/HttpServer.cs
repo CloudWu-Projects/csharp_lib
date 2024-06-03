@@ -78,7 +78,7 @@ namespace csharp_lib.baseLib
             }
             catch(Exception ex)
             {
-                logger.Error($"{ex.Message}");
+                logger.Error($"{ex.Message} {ex.ToString()}");
             }
         }
         public void Stop()
@@ -110,7 +110,7 @@ namespace csharp_lib.baseLib
 
                 RouteAction routeAction;
                 Dictionary<string, string> data;
-                Console.WriteLine($"{request.HttpMethod} {request.Url.LocalPath}");
+                logger.Info($"{request.HttpMethod} {request.Url.LocalPath}");
                 if (request.HttpMethod == "POST")
                 {
                     if (router.TryGetValue_POST(request.Url.LocalPath, out routeAction, out data))
