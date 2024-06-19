@@ -57,16 +57,16 @@ namespace csharp_lib.baseLib
             output = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
             Logger.Info($"{dataSetItem}: {output}");
         }
-        public int getcount_bySQL(string sql)
+        public string getFirstValue_bySQL(string sql)
         {
-            int result = -1;
+            string result = "";
             try
             {
                 using (var reader = ExecuteReader(sql))
                 {
                     if (reader.Read() && reader.HasRows)
                     {
-                        result = reader.GetInt32(0);
+                        result = reader.GetString(0);
                     }
                 }
             }
@@ -74,6 +74,14 @@ namespace csharp_lib.baseLib
             {
                 Logger.Error($"{sql} Exception " + ex.Message + "\n" + ex.StackTrace);
             }
+            return result;
+        }
+        public int getcount_bySQL(string sql)
+        {
+            int result = -1;
+            string resultStr = getFirstValue_bySQL(sql);
+            if (!string.IsNullOrEmpty(resultStr))
+                result = int.Parse(resultStr);
             return result;
         }
 
