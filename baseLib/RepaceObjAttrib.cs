@@ -6,6 +6,7 @@ namespace csharp_lib.baseLib
         internal static string replaceObjAtrribe(object datum, ref string sql)
         {
             var properties = datum.GetType().GetProperties();
+            var fields = datum.GetType().GetFields();
             var newSql = sql.ToLower();
             foreach (var property in properties)
             {
@@ -13,11 +14,21 @@ namespace csharp_lib.baseLib
                 var value = property.GetValue(datum);
                 if (value != null)
                 {
-                    sql = newSql.Replace($"{{json.{name}}}".ToLower(), value.ToString())
+                    newSql = newSql.Replace($"{{json.{name}}}".ToLower(), value.ToString())
                         .Replace($"json.{name}".ToLower(), value.ToString());
                 }
             }
-            return sql;
+            foreach (var property in fields)
+            {
+                var name = property.Name;
+                var value = property.GetValue(datum);
+                if (value != null)
+                {
+                    newSql = newSql.Replace($"{{json.{name}}}".ToLower(), value.ToString())
+                        .Replace($"json.{name}".ToLower(), value.ToString());
+                }
+            }
+            return newSql;
         }
     }
 }
