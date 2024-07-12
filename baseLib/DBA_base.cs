@@ -41,6 +41,10 @@ namespace csharp_lib.baseLib
             var b = a.Expression.Type.FullName+"." + a.Member.Name;
             return b;
         }
+        public void loadSQL(string prefix,string dataSetItem, ref string output)
+        {
+            loadSQL(prefix+"_"+dataSetItem,ref output);
+        }
         public void loadSQL(string dataSetItem,ref string output)
         {
             var sqlFolder = $"{System.Environment.CurrentDirectory}/sql";
