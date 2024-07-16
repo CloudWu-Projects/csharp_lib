@@ -6,9 +6,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using wu_jiaxing20220115;
 
 namespace csharp_lib.baseLib
 {
@@ -308,6 +310,78 @@ namespace csharp_lib.baseLib
             Logger.Debug($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
             throw new Exception($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
             return false;
+        }
+        public bool getDBValue<T>(SqlDataReader reader, ref T t)
+        {
+            try
+            {
+                var properties = typeof(T).GetProperties();
+                foreach (var property in properties)
+                {
+                    var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
+                    var columnName = attribute?.ColumnName ?? property.Name;
+                    if (reader[columnName] != DBNull.Value)
+                    {
+                        object value = getDBValue(reader, columnName, property.PropertyType);
+
+                        property.SetValue(t, value);
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"getDBValue exception \n {ex.Message}\n {ex.StackTrace}");
+            }
+            return false; ;
+        }
+        object getDBValue(SqlDataReader rdr,string fieldName, Type  t1)
+        {
+            //2016-12-12 12:11:20,
+            var ob = rdr[fieldName];
+            if (ob == null || ob == DBNull.Value)
+            {
+                return null;
+            }
+            if (ob.GetType() == t1) 
+                return ob;
+
+            var value = string.Format("{0}", ob);
+            try
+            {
+                if (t1 == typeof(string))
+                {
+                    if (ob.GetType() == typeof(System.DateTime))
+                    {
+                        DateTime otime = Convert.ToDateTime(ob);
+                        return (object)otime.ToString("yyyy-MM-dd HH:mm:ss");
+                    }
+                    else
+                        return (object)value;
+                }
+                else if (t1 == typeof(int) || t1 == typeof(long))
+                {
+                    if (ob.GetType() == typeof(System.DateTime))
+                    {
+                        var timeStamp = new DateTimeOffset(Convert.ToDateTime(ob)).ToUnixTimeSeconds();
+                        return (object)timeStamp;
+                    }
+                    else
+                    {
+                        if (t1 == typeof(int))
+                            return (object)int.Parse(value);
+                        else
+                            return (object)long.Parse(value);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($" getDBValue({ob.GetType()} fieldName:{fieldName} value={value}  {t1}");
+                throw ex;
+            }
+            return null;
         }
         public bool getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
         {
