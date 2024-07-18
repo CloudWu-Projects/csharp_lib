@@ -72,7 +72,11 @@ namespace csharp_lib.baseLib
                 {
                     if (reader.Read() && reader.HasRows)
                     {
-                        result = reader.GetString(0);
+                        var ob = reader.GetValue(0);
+                        if (ob != null && ob != DBNull.Value)
+                        {
+                            result = Convert.ToString(ob);
+                        }
                     }
                 }
             }
