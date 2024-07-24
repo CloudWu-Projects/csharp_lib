@@ -315,7 +315,7 @@ namespace csharp_lib.baseLib
             throw new Exception($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
             return false;
         }
-        public bool getDBValue<T>(SqlDataReader reader, ref T t)
+        public bool fetchDBValues<T>(SqlDataReader reader, ref T t)
         {
             try
             {
@@ -462,6 +462,37 @@ namespace csharp_lib.baseLib
                 throw ex;
             }
         }
+        public List<T> query<T>(string sql, int maxCount = 100) where T : new()
+        {
+            Logger?.Debug($"query####[{typeof(T)}]##### start...");
+            var dataList = new List<T>();
+            try
+            {
+                using (SqlDataReader rdr3_2_1 = this.ExecuteReader(sql))
+                {
+                    while (rdr3_2_1.Read())
+                    {
+                        var item = new T();
+                        if (this.fetchDBValues(rdr3_2_1, ref item))
+                        {
+                            dataList.Add(item);
+                        }
+                        if (dataList.Count > maxCount)
+                        {
+                            break;
+                        }
+                    }
+                    rdr3_2_1.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
+            }
+            Logger?.Debug($"query  count:{dataList.Count()}  end...");
+            return dataList;
+        }
+
 
         public string getString(object value)
         {
