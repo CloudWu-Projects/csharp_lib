@@ -317,27 +317,19 @@ namespace csharp_lib.baseLib
         }
         public bool fetchDBValues<T>(SqlDataReader reader, ref T t)
         {
-            try
+            var properties = typeof(T).GetProperties();
+            foreach (var property in properties)
             {
-                var properties = typeof(T).GetProperties();
-                foreach (var property in properties)
+                var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
+                var columnName = attribute?.ColumnName ?? property.Name;
+                if (reader[columnName] != DBNull.Value)
                 {
-                    var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
-                    var columnName = attribute?.ColumnName ?? property.Name;
-                    if (reader[columnName] != DBNull.Value)
-                    {
-                        object value = getDBValue(reader, columnName, property.PropertyType);
+                    object value = getDBValue(reader, columnName, property.PropertyType);
 
-                        property.SetValue(t, value);
-                    }
+                    property.SetValue(t, value);
                 }
-                return true;
             }
-            catch (Exception ex)
-            {
-                Logger.Error($"getDBValue exception \n {ex.Message}\n {ex.StackTrace}");
-            }
-            return false; ;
+            return true;
         }
         object getDBValue(SqlDataReader rdr,string fieldName, Type  t1)
         {
