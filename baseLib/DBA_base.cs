@@ -123,7 +123,7 @@ namespace csharp_lib.baseLib
         {
             try
             {
-                Logger.Debug($"ExecuteReader sql  {sql}");
+                Logger.Debug($"ExecuteReader sql \n {sql}");
                 using var cmd = new SqlCommand(sql, conn);
                 return cmd.ExecuteReader();
             }
