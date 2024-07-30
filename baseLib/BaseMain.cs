@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace csharp_lib.baseLib
 {
-    static class BaseMain
+    public static class BaseMain
     {
         const uint ENABLE_QUICK_EDIT = 0x0040;
         // STD_INPUT_HANDLE (DWORD): -10 is the standard input device.
@@ -23,7 +20,7 @@ namespace csharp_lib.baseLib
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         public static Mutex  mutex;
-        internal static bool Go(string specailEventName=null)
+        public static bool Go(string specailEventName=null)
         {
             string titleName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
             if(specailEventName!=null)

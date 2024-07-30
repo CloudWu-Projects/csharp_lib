@@ -2,7 +2,7 @@
 
 namespace csharp_lib.baseLib
 {
-    internal class MD5
+    public class MD5
     {
         public static string CreateMD5(string input)
         {
