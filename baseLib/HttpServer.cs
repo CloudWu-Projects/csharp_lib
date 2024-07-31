@@ -46,7 +46,7 @@ namespace csharp_lib.baseLib
     public class ServerHelper
     {
         HttpListener httpListener = null;
-        MyLogger logger = MyLogger.GetLogger("ServerHelper",Config.GetInstance().logLevel);
+        MyLogger logger = MyLogger.GetLogger("ServerHelper");
         Router router = null;
         public ServerHelper(string url)
         {
