@@ -7,6 +7,7 @@ using System.Security.Policy;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
+using HeiFei_20220103;
 
 namespace csharp_lib.baseLib
 {
@@ -45,7 +46,7 @@ namespace csharp_lib.baseLib
     public class ServerHelper
     {
         HttpListener httpListener = null;
-        MyLogger logger = MyLogger.GetLogger("ServerHelper");
+        MyLogger logger = MyLogger.GetLogger("ServerHelper",Config.GetInstance().logLevel);
         Router router = null;
         public ServerHelper(string url)
         {

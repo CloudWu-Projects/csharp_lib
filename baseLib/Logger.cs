@@ -17,18 +17,18 @@ namespace csharp_lib.baseLib
         private static Dictionary<string, MyLogger> loggmap = new Dictionary<string, MyLogger>();
         private string _className;
         private MyLogger()
-        {
+        {            
             Task.Factory.StartNew(MonitorMsg, TaskCreationOptions.LongRunning);
         }
         private object olock = new object();
         int curLogLevel = 0;
-        public static MyLogger GetLogger(string className,int customLogLevel=0)
+        public static MyLogger GetLogger(string className)
         {
             if (!loggmap.ContainsKey(className))
             {
                 var loo = new MyLogger();
                 loo._className = className;
-                loo.curLogLevel = customLogLevel;
+                loo.curLogLevel = HeiFei_20220103.Config.GetInstance().logLevel;
                 loggmap.Add(className, loo);
                 
                 

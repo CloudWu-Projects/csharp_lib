@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Runtime.InteropServices;
 
 namespace csharp_lib.baseLib
@@ -19,14 +20,14 @@ namespace csharp_lib.baseLib
         [DllImport("User32.dll")]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        public static Mutex  mutex;
+        public static System.Threading.Mutex  mutex;
         public static bool Go(string specailEventName=null)
         {
             string titleName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
             if(specailEventName!=null)
                 titleName = specailEventName;
             bool createNew;
-            mutex = new Mutex(true, titleName, out createNew);
+            mutex = new System.Threading.Mutex(true, titleName, out createNew);
             if (!createNew)
             {
                 Console.WriteLine("only a single instance can run in a time");
@@ -51,7 +52,7 @@ namespace csharp_lib.baseLib
             }
             IntPtr pwnd = new IntPtr(0);
             IntPtr et = new IntPtr(0);
-            Thread.Sleep(10);
+            System.Threading.Thread.Sleep(10);
             pwnd = FindWindow(null, Console.Title);
             ShowWindow(pwnd, 2);
             return true;
