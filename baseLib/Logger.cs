@@ -47,6 +47,7 @@ namespace csharp_lib.baseLib
         public virtual void Dispose()
         {
             disposedValue = true;
+            _msgARE.Set();
         }
 
         void MonitorMsg()
