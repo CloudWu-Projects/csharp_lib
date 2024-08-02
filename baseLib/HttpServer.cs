@@ -53,6 +53,8 @@ namespace csharp_lib.baseLib
             httpListener = new HttpListener();
             // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
            // httpListener.Prefixes.Add(string.Format("http://*:{0}/", port));//如果发送到8080 端口没有被处理，则这里全部受理，+是全部接收
+           if(!url.EndsWith("/")) 
+                url += "/";
             httpListener.Prefixes.Add(url);
             foreach(var a  in httpListener.Prefixes)
                 logger.Debug($"startHttp server: {a.ToString()}");

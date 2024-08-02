@@ -321,6 +321,7 @@ namespace csharp_lib.baseLib
             {
                 var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
                 var columnName = attribute?.ColumnName ?? property.Name;
+                columnName = columnName.ToLower();
                 if (reader[columnName] != DBNull.Value)
                 {
                     object value = getDBValue(reader, columnName, property.PropertyType);
@@ -458,8 +459,8 @@ namespace csharp_lib.baseLib
             Logger?.Debug($"query####[{typeof(T)}]##### start...");
             var dataList = new List<T>();
             try
-            {
-                using (SqlDataReader rdr3_2_1 = this.ExecuteReader(sql))
+            {                
+                using (SqlDataReader rdr3_2_1 = this.ExecuteReader(sql.ToLower()))
                 {
                     while (rdr3_2_1.Read())
                     {
