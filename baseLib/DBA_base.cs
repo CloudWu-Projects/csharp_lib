@@ -328,6 +328,16 @@ namespace csharp_lib.baseLib
 
                     property.SetValue(t, value);
                 }
+                else if(columnName!=property.Name)
+                {
+                    columnName = property.Name.ToLower();
+                    if (reader[columnName] != DBNull.Value)
+                    {
+                        object value = getDBValue(reader, columnName, property.PropertyType);
+
+                        property.SetValue(t, value);
+                    }
+                }
             }
             return true;
         }
