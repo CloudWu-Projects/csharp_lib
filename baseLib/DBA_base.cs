@@ -330,7 +330,8 @@ namespace csharp_lib.baseLib
 
                         property.SetValue(t, value);
                         continue;
-                    }
+                    }                    
+                    
                 }
 
                 columnName = property.Name.ToLower();
@@ -487,10 +488,17 @@ namespace csharp_lib.baseLib
                 {
                     while (rdr3_2_1.Read())
                     {
+
                         var item = new T();
-                        if (this.fetchDBValues(rdr3_2_1, ref item))
+                        try
                         {
-                            dataList.Add(item);
+                            if (this.fetchDBValues(rdr3_2_1, ref item))
+                            {
+                                dataList.Add(item);
+                            }
+                        }catch(Exception ex)
+                        {
+                            Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
                         }
                         if (dataList.Count > maxCount)
                         {
