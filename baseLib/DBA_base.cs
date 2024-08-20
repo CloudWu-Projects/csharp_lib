@@ -320,24 +320,37 @@ namespace csharp_lib.baseLib
             foreach (var property in properties)
             {
                 var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
-                var columnName = attribute?.ColumnName ?? property.Name;
-                columnName = columnName.ToLower();
-                if (reader[columnName] != DBNull.Value)
+                var columnName = attribute?.ColumnName;// ?? property.Name;
+                if(columnName!=null)
                 {
-                    object value = getDBValue(reader, columnName, property.PropertyType);
-
-                    property.SetValue(t, value);
-                }
-                else if(columnName!=property.Name)
-                {
-                    columnName = property.Name.ToLower();
+                    columnName = columnName.ToLower();
                     if (reader[columnName] != DBNull.Value)
                     {
                         object value = getDBValue(reader, columnName, property.PropertyType);
 
                         property.SetValue(t, value);
+                        continue;
                     }
                 }
+
+                columnName = property.Name.ToLower();
+
+                try
+                {
+                    if (reader.GetOrdinal(columnName) != -1)
+                    {
+                        if (reader[columnName] != DBNull.Value)
+                        {
+                            object value = getDBValue(reader, columnName, property.PropertyType);
+
+                            property.SetValue(t, value);
+                        }
+                    }
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                }
+
             }
             return true;
         }
