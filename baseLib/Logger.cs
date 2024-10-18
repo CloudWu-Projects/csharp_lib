@@ -60,7 +60,7 @@ namespace csharp_lib.baseLib
                     while (_msgQueue.TryDequeue(out var data))
                     {
                         Console.WriteLine(data.content);
-                        WriteLogs("logs", data.type, data.content);
+                        WriteLogs("logs",data.threadID, data.type, data.content);
                     }
                 }
                 catch (Exception e)
@@ -72,7 +72,7 @@ namespace csharp_lib.baseLib
             _msgQueue.Clear();
             _msgQueue = null;
         }
-        public void WriteLogs(string dirName, string type, string content)
+        public void WriteLogs(string dirName,int threadID, string type, string content)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory;
             if (!string.IsNullOrEmpty(path))
@@ -93,7 +93,7 @@ namespace csharp_lib.baseLib
                     if (File.Exists(path))
                     {
                         StreamWriter sw = new StreamWriter(path, true, System.Text.Encoding.Default);
-                        sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff ") + (_className ?? "") + " : " + type + " --> " + content);
+                        sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff ")+ $" {threadID} "+ (_className ?? "") + " : " + type + " --> " + content);
                         sw.Close();
                     }
                 }
@@ -104,6 +104,7 @@ namespace csharp_lib.baseLib
         {
             public string type;
             public string content;
+            public  int threadID=Thread.CurrentThread.ManagedThreadId;
         }
         ConcurrentQueue<LogMsg> _msgQueue = new ConcurrentQueue<LogMsg>();
         protected readonly AutoResetEvent _msgARE = new AutoResetEvent(false);
