@@ -72,7 +72,7 @@ def sendMail_Zip(z,projectMsg,projectDir='./'):
 
     m.attach(textApart)
     m.attach(zipApart)
-    m['Subject']='proect :{0} {1}'.format(headcommit.message,zip_name)
+    m['Subject']='proect :{1} {0}'.format(headcommit.message,zip_name)
 
     server = smtplib.SMTP(smtp_server, 25) # SMTP协议默认端口是25
     #server.set_debuglevel(1)
