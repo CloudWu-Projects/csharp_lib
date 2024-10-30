@@ -122,7 +122,7 @@ namespace csharp_lib.baseLib
         {
             try
             {
-                Logger.Debug($"ExecuteReader sql \n {sql}");
+                //Logger.Debug($"ExecuteReader sql \n {sql}");
                 using var cmd = new SqlCommand(sql, conn);
                 return cmd.ExecuteReader();
             }
@@ -478,7 +478,7 @@ namespace csharp_lib.baseLib
                 throw ex;
             }
         }
-        public List<T> query<T>(string sql, int maxCount = 100) where T : new()
+        public List<T> query<T>(string sql, int maxCount = 10) where T : new()
         {
             Logger?.Debug($"query####[{typeof(T)}]##### start...");
             var dataList = new List<T>();
