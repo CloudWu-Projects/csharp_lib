@@ -480,7 +480,6 @@ namespace csharp_lib.baseLib
         }
         public List<T> query<T>(string sql, int maxCount = 10) where T : new()
         {
-            Logger?.Debug($"query####[{typeof(T)}]##### start...");
             var dataList = new List<T>();
             try
             {                
@@ -512,7 +511,7 @@ namespace csharp_lib.baseLib
             {
                 Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
             }
-            Logger?.Debug($"query  count:{dataList.Count()}  end...");
+            Logger?.Debug($"query####[{typeof(T)}]##### count {dataList.Count()}");
             return dataList;
         }
 
