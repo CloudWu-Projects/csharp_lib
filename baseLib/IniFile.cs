@@ -10,21 +10,21 @@ namespace csharp_lib.baseLib
     public class IniFile
     {
         public byte[] Path;
-        private bool bWriteIni=false;
+        private bool bWriteIni = false;
 
         bool isUtf8Bom(byte[] bytes)
         {
-            return (bytes.Length>=3)&&bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
+            return (bytes.Length >= 3) && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
         }
         byte[] RemoveUtf8Bom(byte[] bytes)
         {
             return bytes[3..];
         }
-         void ConvertIniFileToUTF8(string filePath)
+        void ConvertIniFileToUTF8(string filePath)
         {
-            byte[]fileBytes = File.ReadAllBytes(filePath);
+            byte[] fileBytes = File.ReadAllBytes(filePath);
 
-            if(isUtf8Bom(fileBytes))
+            if (isUtf8Bom(fileBytes))
             {
                 byte[] utf8Bytes = RemoveUtf8Bom(fileBytes);
                 string utf8Str = Encoding.UTF8.GetString(utf8Bytes);
@@ -37,7 +37,7 @@ namespace csharp_lib.baseLib
             string _path = ".\\config.ini";
             this.Path = getBytes(_path);
             bWriteIni = (!System.IO.File.Exists(_path));
-            if(System.IO.File.Exists(_path) )
+            if (System.IO.File.Exists(_path))
             {
                 ConvertIniFileToUTF8(_path);
             }
@@ -65,9 +65,9 @@ namespace csharp_lib.baseLib
             var sec = getBytes(section);
             var keya = getBytes(key);
             var value = getBytes(iValue);
-            WritePrivateProfileString(sec,keya,value, this.Path);
+            WritePrivateProfileString(sec, keya, value, this.Path);
         }
-        private static byte[] getBytes(string s, string encodingName="utf-8")
+        private static byte[] getBytes(string s, string encodingName = "utf-8")
         {
             return null == s ? null : Encoding.GetEncoding(encodingName).GetBytes(s);
         }
@@ -77,13 +77,21 @@ namespace csharp_lib.baseLib
         /// <param name="section">段落</param>
         /// <param name="key">键</param>
         /// <returns>返回的键值</returns>
-        public string IniReadValue(string section, string key,string defaultValue="")
+        public string IniReadValue(string section, string key, string defaultValue = "")
         {
             if (bWriteIni)
-                IniWriteValue(section, key, defaultValue);           
+                IniWriteValue(section, key, defaultValue);
             byte[] buffer = new byte[1024];
-            int count = GetPrivateProfileString(getBytes(section),getBytes(key),getBytes(defaultValue),buffer,1024,this.Path);
-            return Encoding.GetEncoding("utf-8").GetString(buffer, 0, count).Trim();            
+            int count = GetPrivateProfileString(getBytes(section), getBytes(key), getBytes(defaultValue), buffer, 1024, this.Path);
+            return Encoding.GetEncoding("utf-8").GetString(buffer, 0, count).Trim();
+        }
+        public string IniReadValue<T>(string section, string key, T defaultValue )
+        {
+           return IniReadValue(section, key, defaultValue.ToString());
+        }
+        public TimeSpan IniReadValue(string section,string key,TimeSpan defaultValue)
+        {
+             return  TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section,key, defaultValue.TotalSeconds)));
         }
     }
 }
