@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 using HeiFei_20220103;
+using System.Web;
 
 namespace csharp_lib.baseLib
 {
@@ -56,8 +57,12 @@ namespace csharp_lib.baseLib
            if(!url.EndsWith("/")) 
                 url += "/";
             httpListener.Prefixes.Add(url);
-            foreach(var a  in httpListener.Prefixes)
+            foreach (var a in httpListener.Prefixes)
+            {
+                //netsh http add urlacl url=http://+:8080/ user=Everyone
                 logger.Debug($"startHttp server: {a.ToString()}");
+                logger.Error($"netsh http add urlacl url={a.ToString()} user=Everyone");
+            }
             router = new Router();
         }
         string defaultRouterHtml = "";
@@ -82,6 +87,8 @@ namespace csharp_lib.baseLib
             catch(Exception ex)
             {
                 logger.Error($"{ex.Message} {ex.ToString()}");
+
+               
             }
         }
         public void Stop()
@@ -142,13 +149,37 @@ namespace csharp_lib.baseLib
                     }
                     else if (string.Equals(request.Url.LocalPath, "/getfile"))
                     {
-                        HttpListenerResponse response = context.Response;
-                        RequestHelper = new RequestHelper(request, logger);
-                        ResponseHelper = new ResponseHelper(response);
-                        RequestHelper.DispatchResources(fs =>
+                        string query = request.Url.Query;
+                        var queryParams = HttpUtility.ParseQueryString(query);
+                        if (queryParams.Count == 0)
                         {
-                            ResponseHelper.WriteToClient(fs);// 对相应的请求做出回应
-                        });
+                            return;
+                        }
+                        var filePath1 = queryParams[0];
+                        var filePath = System.Web.HttpUtility.UrlDecode(filePath1);
+                        HttpListenerResponse response = context.Response;
+                        if (File.Exists(filePath))
+                        {
+                            // 返回静态文件内容
+                            byte[] fileBytes = File.ReadAllBytes(filePath);
+                            response.ContentType = GetContentType(filePath);
+                            response.ContentLength64 = fileBytes.Length;
+                            response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
+                        }
+                        else
+                        {
+                            response.StatusCode = 404;
+                            byte[] errorBytes = System.Text.Encoding.UTF8.GetBytes("File not found");
+                            response.OutputStream.Write(errorBytes, 0, errorBytes.Length);
+                        }
+                        response.OutputStream.Close();
+                        //HttpListenerResponse response = context.Response;
+                        //RequestHelper = new RequestHelper(request, logger);
+                        //ResponseHelper = new ResponseHelper(response);
+                        //RequestHelper.DispatchResources(fs =>
+                        //{
+                        //    ResponseHelper.WriteToClient(fs);// 对相应的请求做出回应
+                        //});
                     }
                 
                 }
@@ -167,7 +198,21 @@ namespace csharp_lib.baseLib
                 logger.Debug($"{ex.StackTrace} {ex.Message}");}
         }
 
-
+        // 根据文件扩展名返回 Content-Type
+        static string GetContentType(string filePath)
+        {
+            string ext = Path.GetExtension(filePath).ToLower();
+            return ext switch
+            {
+                ".html" => "text/html",
+                ".css" => "text/css",
+                ".js" => "application/javascript",
+                ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream"
+            };
+        }
     }
     public class RequestHelper
     {
@@ -193,7 +238,13 @@ namespace csharp_lib.baseLib
                 //filePath = string.Format(@"{0}/wwwroot/index.html", Environment.CurrentDirectory);//默认访问文件
                 return;
             }
-            var filePath1 = rawUrl.Substring(1);
+            string query= request.Url.Query;
+            var queryParams = HttpUtility.ParseQueryString(query);
+            if (queryParams.Count==0)
+            {
+                return;
+            }
+            var filePath1 = queryParams[0];
             var filePath = System.Web.HttpUtility.UrlDecode(filePath1);
             if (_logger != null)
                 _logger.Debug($"http recv request {filePath}");
@@ -263,6 +314,7 @@ namespace csharp_lib.baseLib
         public void WriteToClient(FileStream fs)
         {
             response.StatusCode = 200;
+            response.ContentType = "image/jpeg";
             byte[] buffer = new byte[fs.Length];
             FileObject obj = new FileObject() { fs = fs, buffer = buffer };
             fs.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(EndWrite), obj);
