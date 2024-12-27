@@ -57,7 +57,7 @@ dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir}
 
 a =os.system(dotnetCommand)
 print(a)
-a=1
+
 if a==0:
     print('publish success')
     sendFolder(PublishDir,gitFolder)
