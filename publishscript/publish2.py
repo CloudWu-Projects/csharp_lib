@@ -15,9 +15,10 @@ import os
 def findGitFolder():
     path = os.path.dirname(os.path.realpath(__file__))
     
-    while True:
-        if os.path.exists(path+r'\.git'):
-            return path
+    while True:        
+        if os.path.exists(os.path.join(path,'.git')):
+            if 'csharp_lib' not in path:
+                return path
         path = os.path.dirname(path)
         if len(path)<3:
             break
@@ -56,7 +57,7 @@ dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir}
 
 a =os.system(dotnetCommand)
 print(a)
-
+a=1
 if a==0:
     print('publish success')
     sendFolder(PublishDir,gitFolder)
