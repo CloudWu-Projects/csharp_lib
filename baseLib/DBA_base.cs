@@ -29,6 +29,10 @@ namespace csharp_lib.baseLib
         {
             Init(_logger);
         }
+        public DBA_base()
+        {
+
+        }
         void Init(MyLogger _logger)
         {
             Logger = _logger;
