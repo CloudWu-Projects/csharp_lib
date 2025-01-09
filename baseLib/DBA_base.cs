@@ -18,6 +18,10 @@ namespace csharp_lib.baseLib
         public MyLogger Logger = null;
         public SqlConnection conn;
         public bool isConnected = false;
+        string dbServer;
+        string dbName;
+        string dbUserName;
+        string dbPassword;
         public DBA_base(string logName)
         {
             // Targets where to log to: File and Console
@@ -81,6 +85,7 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                isConnected = false;
                 Logger.Error($"{sql} Exception " + ex.Message + "\n" + ex.StackTrace);
             }
             return result;
@@ -93,11 +98,23 @@ namespace csharp_lib.baseLib
                 result = int.Parse(resultStr);
             return result;
         }
-
+        public bool ConnectDB(){
+            if(isConnected)
+                return true;
+            return _open();
+        }
         public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
         {
             if (isConnected)
                 return true;
+            this.dbServer = dbServer;
+            this.dbName = dbName;
+            this.dbUserName = dbUserName;
+            this.dbPassword = dbPassword;
+            return _open();
+        }
+        bool _open()
+        {
             try
             {
                 var cs = $@"Data Source={dbServer};Initial Catalog={dbName};User ID={dbUserName};Password={dbPassword}";
@@ -120,6 +137,11 @@ namespace csharp_lib.baseLib
 
         public SqlDataReader ExecuteReader(string sql)
         {
+            if(!ConnectDB())
+            {
+                Logger.Error($"can not connect to DB");
+                throw new Exception($"can not connect to DB");
+            }
             try
             {
                 //Logger.Debug($"ExecuteReader sql \n {sql}");
@@ -128,12 +150,18 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                isConnected = false;
                 Logger.Error($"ExecuteReader exception \n {ex.Message}\n {ex.StackTrace}");
                 throw;
             }
         }
         public int ExcuteProcedure_nonQuery(string proceDureName)
         {
+            if(!ConnectDB())
+            {
+                Logger.Error($"can not connect to DB");
+                throw new Exception($"can not connect to DB");
+            }
             try
             {
                 Logger.Debug($"ExcuteProcedure {proceDureName}");
@@ -146,12 +174,18 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                isConnected = false;
                 Logger.Error($"ExcuteNonQuery exception \n {ex.Message}\n {ex.StackTrace}");
                 throw;
             }
         }
         public string ExcuteProcedure_withResult(string proceDureName)
         {
+            if(!ConnectDB())
+            {
+                Logger.Error($"can not connect to DB");
+                throw new Exception($"can not connect to DB");
+            }
             try
             {
                 Logger.Debug($"ExcuteProcedure_withResult {proceDureName}");
@@ -178,6 +212,7 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                isConnected = false;
                 Logger.Error($"ExcuteProcedure_withResult exception \n {ex.Message}\n {ex.StackTrace}");
                 throw;
             }
@@ -185,7 +220,12 @@ namespace csharp_lib.baseLib
         }
 
         public int ExcuteNonQuery(string sql)
-        {
+        {           
+            if(!ConnectDB())
+            {
+                Logger.Error($"can not connect to DB");
+                throw new Exception($"can not connect to DB");
+            }
             try
             {
                 Logger.Debug($"ExcuteNonQuery sql  {sql}");
@@ -196,6 +236,7 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                isConnected=false;
                 Logger.Error($"ExcuteNonQuery exception \n {ex.Message}\n {ex.StackTrace}");
                 throw;
             }
@@ -480,6 +521,11 @@ namespace csharp_lib.baseLib
         }
         public List<T> query<T>(string sql, int maxCount = 10) where T : new()
         {
+            if(!ConnectDB())
+            {
+                Logger.Error($"can not connect to DB");
+                throw new Exception($"can not connect to DB");
+            }
             var dataList = new List<T>();
             try
             {                
@@ -509,6 +555,7 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
+                isConnected = false;
                 Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
             }
             Logger?.Debug($"query####[{typeof(T)}]##### count {dataList.Count()}");
