@@ -6,7 +6,7 @@ namespace csharp_lib.baseLib
 {
     class ImgToBase64
     {
-        static public string toBase64String(string ImageFileName,MyLogger logger)
+        static public string toBase64String(string ImageFileName, MyLogger logger)
         {
             try
             {
@@ -18,36 +18,39 @@ namespace csharp_lib.baseLib
                 ms.Read(arr, 0, (int)ms.Length);
                 ms.Close();
                 return Convert.ToBase64String(arr);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger?.Error($"toBase64String exception: {ImageFileName}");
                 logger?.Error($"toBase64String exception: {ex.ToString()}");
                 throw ex;
             }
         }
-        public static string ConvertImageToBase64WithQuality(string imagePath, long quality,MyLogger logger)
+        public static string ConvertImageToBase64WithQuality(string imagePath, long quality, MyLogger logger)
         {
-            try { 
-            Image image = Image.FromFile(imagePath);
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                // Create encoder parameters for setting the quality
-                EncoderParameters encoderParameters = new EncoderParameters(1);
-                encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                Image image = Image.FromFile(imagePath);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    // Create encoder parameters for setting the quality
+                    EncoderParameters encoderParameters = new EncoderParameters(1);
+                    encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
 
-                // Get the JPEG codec info
-                ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                    // Get the JPEG codec info
+                    ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
 
-                // Save the image to the memory stream with specified quality
-                image.Save(ms, jpegCodec, encoderParameters);
+                    // Save the image to the memory stream with specified quality
+                    image.Save(ms, jpegCodec, encoderParameters);
 
-                // Convert the image bytes to a base64 string
-                byte[] imageBytes = ms.ToArray();
-                string base64String = Convert.ToBase64String(imageBytes);
+                    // Convert the image bytes to a base64 string
+                    byte[] imageBytes = ms.ToArray();
+                    string base64String = Convert.ToBase64String(imageBytes);
 
-                return base64String;
+                    return base64String;
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger?.Error($"ConvertImageToBase64WithQuality failed.:{imagePath}");
                 logger?.Error($"ConvertImageToBase64WithQuality exception: {ex.ToString()}");
@@ -71,14 +74,14 @@ namespace csharp_lib.baseLib
 
             return null;
         }
-        public static string  Scale_and_Base64String(string ImageFileName,int destWidth,int destHeight)
+        public static string Scale_and_Base64String(string ImageFileName, int destWidth, int destHeight)
         {
             try
             {
                 Image image = Image.FromFile(ImageFileName);
 
-               Image scaledImage =  ImageZoom.ZoomPicture(image,destWidth,destHeight);
-               
+                Image scaledImage = ImageZoom.ZoomPicture(image, destWidth, destHeight);
+
                 MemoryStream ms = new MemoryStream();
                 scaledImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
                 byte[] arr = new byte[ms.Length];
@@ -95,8 +98,9 @@ namespace csharp_lib.baseLib
         }
         public static string Crop_and_Base64String(string ImageFileName, int cropLeft, int cropTop, int cropRight, int cropBottom)
         {
-            try {
-                Image cropedImage = Crop(ImageFileName,  cropLeft,  cropTop,  cropRight,  cropBottom);
+            try
+            {
+                Image cropedImage = Crop(ImageFileName, cropLeft, cropTop, cropRight, cropBottom);
 
                 MemoryStream ms = new MemoryStream();
                 cropedImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
@@ -111,7 +115,7 @@ namespace csharp_lib.baseLib
             }
             return null;
         }
-        public static Image Crop(string orgPicPath,int cropLeft,int cropTop,int cropRight,int cropBottom)
+        public static Image Crop(string orgPicPath, int cropLeft, int cropTop, int cropRight, int cropBottom)
         {
 
             //从文件加载原图

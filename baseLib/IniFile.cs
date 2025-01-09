@@ -89,6 +89,18 @@ namespace csharp_lib.baseLib
         {
            return IniReadValue(section, key, defaultValue.ToString());
         }
+        public T IniReadValueT<T>(string section, string key, T defaultValue)
+        {
+            if (typeof(T) == typeof(int))
+            {
+                return (T)(object)int.Parse(IniReadValue(section, key, defaultValue.ToString()));
+            }
+            else if(typeof(T) == typeof(TimeSpan))
+            {
+                return (T)(object)TimeSpan.Parse(IniReadValue(section, key, defaultValue.ToString()));
+            }
+            return (T)(object)IniReadValue(section, key, defaultValue.ToString());
+        }
         public TimeSpan IniReadValue(string section,string key,TimeSpan defaultValue)
         {
              return  TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section,key, defaultValue.TotalSeconds)));
