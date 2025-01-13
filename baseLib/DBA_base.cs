@@ -565,6 +565,7 @@ namespace csharp_lib.baseLib
             {
                 isConnected = false;
                 Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
+                Logger?.Error(sql);
             }
             Logger?.Debug($"query####[{typeof(T)}]##### count {dataList.Count()}");
             return dataList;
