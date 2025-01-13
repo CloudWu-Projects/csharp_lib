@@ -13,6 +13,7 @@ using wu_jiaxing20220115;
 
 namespace csharp_lib.baseLib
 {
+   
     public class DBA_base
     {
         public MyLogger Logger = null;
@@ -22,6 +23,7 @@ namespace csharp_lib.baseLib
         string dbName;
         string dbUserName;
         string dbPassword;
+        public string dbConnectionString;
         public DBA_base(string logName)
         {
             // Targets where to log to: File and Console
@@ -115,16 +117,18 @@ namespace csharp_lib.baseLib
             this.dbName = dbName;
             this.dbUserName = dbUserName;
             this.dbPassword = dbPassword;
+            var cs = $@"Data Source={dbServer};Initial Catalog={dbName};User ID={dbUserName};Password={dbPassword}";
+            dbConnectionString = cs;
             return _open();
         }
         bool _open()
         {
             try
             {
-                var cs = $@"Data Source={dbServer};Initial Catalog={dbName};User ID={dbUserName};Password={dbPassword}";
-                Logger.Info($"Db Connectstr :{cs}");
+               
+                Logger.Info($"Db Connectstr :{dbConnectionString}");
                 var stm = "SELECT @@VERSION";
-                conn = new SqlConnection(cs);
+                conn = new SqlConnection(dbConnectionString);
                 conn.Open();
                 using var cmd = new SqlCommand(stm, conn);
                 string version = cmd.ExecuteScalar().ToString();
