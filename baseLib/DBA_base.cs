@@ -452,6 +452,12 @@ namespace csharp_lib.baseLib
             }
             return null;
         }
+        public string varchar_to_utf8(string varcharData)
+        {
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(varcharData);
+            string utf8String = Encoding.UTF8.GetString(utf8Bytes);
+            return utf8String;
+        }
         public bool getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
         {
             //2016-12-12 12:11:20,
