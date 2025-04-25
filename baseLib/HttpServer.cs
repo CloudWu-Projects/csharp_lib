@@ -60,8 +60,8 @@ namespace csharp_lib.baseLib
             foreach (var a in httpListener.Prefixes)
             {
                 //netsh http add urlacl url=http://+:8080/ user=Everyone
-                logger.Debug($"startHttp server: {a.ToString()}");
-                logger.Error($"netsh http add urlacl url={a.ToString()} user=Everyone");
+                logger.Info($"startHttp server: {a.ToString()}");
+                logger.Info($"netsh http add urlacl url={a.ToString()} user=Everyone");
             }
             router = new Router();
         }
@@ -186,7 +186,7 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
-                logger.Debug($"{ex.StackTrace} {ex.Message}");
+                logger.Error($"{ex.StackTrace} {ex.Message}");
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
             try
@@ -195,7 +195,7 @@ namespace csharp_lib.baseLib
                 context.Response.Close();
             }
             catch (Exception ex) { 
-                logger.Debug($"{ex.StackTrace} {ex.Message}");}
+                logger.Error($"{ex.StackTrace} {ex.Message}");}
         }
 
         // 根据文件扩展名返回 Content-Type
@@ -247,7 +247,7 @@ namespace csharp_lib.baseLib
             var filePath1 = queryParams[0];
             var filePath = System.Web.HttpUtility.UrlDecode(filePath1);
             if (_logger != null)
-                _logger.Debug($"http recv request {filePath}");
+                _logger.Info($"http recv request {filePath}");
             try
             {
                 if (File.Exists(filePath))
