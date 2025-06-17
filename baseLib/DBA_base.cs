@@ -13,7 +13,7 @@ using wu_jiaxing20220115;
 
 namespace csharp_lib.baseLib
 {
-   
+
     public class DBA_base
     {
         public MyLogger Logger = null;
@@ -49,21 +49,22 @@ namespace csharp_lib.baseLib
         {
             var a = ((System.Linq.Expressions.MemberExpression)exp.Body);
 
-            var b = a.Expression.Type.FullName+"." + a.Member.Name;
+            var b = a.Expression.Type.FullName + "." + a.Member.Name;
             return b;
         }
-        public void loadSQL(string prefix,string dataSetItem, ref string output)
+        public void loadSQL(string prefix, string dataSetItem, ref string output)
         {
-            loadSQL(prefix+"_"+dataSetItem,ref output);
+            loadSQL(prefix + "_" + dataSetItem, ref output);
         }
-        public void loadSQL(string dataSetItem,ref string output)
+        public void loadSQL(string dataSetItem, ref string output)
         {
             var sqlFolder = $"{System.Environment.CurrentDirectory}/sql";
             var path = $"{sqlFolder}/{dataSetItem}.sql";
             Logger.Info($"SQL path: {path}");
             if (!System.IO.File.Exists(path))
             {
-                try { 
+                try
+                {
                     System.IO.Directory.CreateDirectory(sqlFolder);
                 }
                 catch (Exception es) { }
@@ -104,12 +105,13 @@ namespace csharp_lib.baseLib
                 result = int.Parse(resultStr);
             return result;
         }
-        public bool ConnectDB(){
-            if(isConnected)
+        public bool ConnectDB()
+        {
+            if (isConnected)
                 return true;
             return _open();
         }
-        public bool Open(string dbServer,string dbName,string dbUserName,string dbPassword)
+        public bool Open(string dbServer, string dbName, string dbUserName, string dbPassword)
         {
             if (isConnected)
                 return true;
@@ -125,7 +127,7 @@ namespace csharp_lib.baseLib
         {
             try
             {
-               
+
                 Logger.Info($"Db Connectstr :{dbConnectionString}");
                 var stm = "SELECT @@VERSION";
                 conn = new SqlConnection(dbConnectionString);
@@ -138,14 +140,14 @@ namespace csharp_lib.baseLib
             catch (Exception ex)
             {
                 Logger.Error($"exception {ex.Message}\n{ex.StackTrace}");
-                isConnected= false;
+                isConnected = false;
             }
             return isConnected;
         }
 
         public SqlDataReader ExecuteReader(string sql)
         {
-            if(!ConnectDB())
+            if (!ConnectDB())
             {
                 Logger.Error($"can not connect to DB");
                 throw new Exception($"can not connect to DB");
@@ -165,7 +167,7 @@ namespace csharp_lib.baseLib
         }
         public int ExcuteProcedure_nonQuery(string proceDureName)
         {
-            if(!ConnectDB())
+            if (!ConnectDB())
             {
                 Logger.Error($"can not connect to DB");
                 throw new Exception($"can not connect to DB");
@@ -175,7 +177,7 @@ namespace csharp_lib.baseLib
                 Logger.Debug($"ExcuteProcedure {proceDureName}");
                 SqlCommand aCommand = new SqlCommand(proceDureName, conn);
                 aCommand.CommandType = CommandType.StoredProcedure;
-                int i= aCommand.ExecuteNonQuery();
+                int i = aCommand.ExecuteNonQuery();
 
                 Logger.Debug($"ExcuteProcedure={i} [{proceDureName}]");
                 return i;
@@ -189,7 +191,7 @@ namespace csharp_lib.baseLib
         }
         public string ExcuteProcedure_withResult(string proceDureName)
         {
-            if(!ConnectDB())
+            if (!ConnectDB())
             {
                 Logger.Error($"can not connect to DB");
                 throw new Exception($"can not connect to DB");
@@ -202,7 +204,7 @@ namespace csharp_lib.baseLib
 
                 aCommand.Parameters.AddWithValue("@pin1", "aaa");
 
-                SqlParameter parOutput = aCommand.Parameters.Add("@pout1",SqlDbType.NVarChar,50);
+                SqlParameter parOutput = aCommand.Parameters.Add("@pout1", SqlDbType.NVarChar, 50);
                 parOutput.Direction = ParameterDirection.Output;
 
 
@@ -210,7 +212,7 @@ namespace csharp_lib.baseLib
                 SqlParameter returnValueParam = new SqlParameter();
                 returnValueParam.ParameterName = "@returnValue";
                 returnValueParam.Direction = ParameterDirection.ReturnValue;
-                aCommand.Parameters.Add( returnValueParam );
+                aCommand.Parameters.Add(returnValueParam);
 
                 int i = aCommand.ExecuteNonQuery();
                 int rv = (int)aCommand.Parameters["@returnValue"].Value;
@@ -228,8 +230,8 @@ namespace csharp_lib.baseLib
         }
 
         public int ExcuteNonQuery(string sql)
-        {           
-            if(!ConnectDB())
+        {
+            if (!ConnectDB())
             {
                 Logger.Error($"can not connect to DB");
                 throw new Exception($"can not connect to DB");
@@ -244,7 +246,7 @@ namespace csharp_lib.baseLib
             }
             catch (Exception ex)
             {
-                isConnected=false;
+                isConnected = false;
                 Logger.Error($"ExcuteNonQuery exception \n {ex.Message}\n {ex.StackTrace}");
                 throw;
             }
@@ -324,8 +326,8 @@ namespace csharp_lib.baseLib
         public string getDBString(object ob)
         {
             if (ob == null || ob == DBNull.Value) return "";
-            var b =string.Format("{0}", ob);
-            return b;            
+            var b = string.Format("{0}", ob);
+            return b;
         }
         public int getDBInt(object ob)
         {
@@ -370,7 +372,7 @@ namespace csharp_lib.baseLib
             {
                 var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
                 var columnName = attribute?.ColumnName;// ?? property.Name;
-                if(columnName!=null)
+                if (columnName != null)
                 {
                     columnName = columnName.ToLower();
                     if (reader[columnName] != DBNull.Value)
@@ -379,8 +381,8 @@ namespace csharp_lib.baseLib
 
                         property.SetValue(t, value);
                         continue;
-                    }                    
-                    
+                    }
+
                 }
 
                 columnName = property.Name.ToLower();
@@ -404,56 +406,82 @@ namespace csharp_lib.baseLib
             }
             return true;
         }
-        object getDBValue(SqlDataReader rdr,string fieldName, Type  t1)
+        object getDBValue(SqlDataReader rdr, string fieldName, Type t1)
         {
-            //2016-12-12 12:11:20,
             var ob = rdr[fieldName];
             if (ob == null || ob == DBNull.Value)
             {
                 return null;
             }
-            if (ob.GetType() == t1) 
-                return ob;
 
-            var value = string.Format("{0}", ob);
-            try
+            // Handle nullable types
+            Type underlyingType = Nullable.GetUnderlyingType(t1);
+            if (underlyingType != null)
             {
-                if (t1 == typeof(string))
-                {
-                    if (ob.GetType() == typeof(System.DateTime))
-                    {
-                        DateTime otime = Convert.ToDateTime(ob);
-                        return (object)otime.ToString("yyyy-MM-dd HH:mm:ss");
-                    }
-                    else
-                        return (object)value;
-                }
-                else if (t1 == typeof(float) || t1==typeof(double))
-                {
-                    return (object)float.Parse(value);
-                }
-                else if (t1 == typeof(int) || t1 == typeof(long))
-                {
-                    if (ob.GetType() == typeof(System.DateTime))
-                    {
-                        var timeStamp = new DateTimeOffset(Convert.ToDateTime(ob)).ToUnixTimeSeconds();
-                        return (object)timeStamp;
-                    }
-                    else
-                    {
-                        if (t1 == typeof(int))
-                            return (object)int.Parse(value);
-                        else
-                            return (object)long.Parse(value);
-                    }
-                }
+                t1 = underlyingType;
+            }
 
-            }
-            catch (Exception ex)
+            if (ob is IConvertible convertible)
             {
-                Logger.Error($" getDBValue({ob.GetType()} fieldName:{fieldName} value={value}  {t1}");
-                throw ex;
+                try
+                {
+                    if (t1 == typeof(string))
+                    {
+                        if (ob is DateTime otime)
+                        {
+                            return otime.ToString("yyyy-MM-dd HH:mm:ss");
+                        }
+                        return convertible.ToString(null);
+                    }
+
+                    if (t1 == typeof(float) || t1 == typeof(double))
+                    {
+                        return Convert.ToSingle(convertible);
+                    }
+
+                    if (t1 == typeof(int))
+                    {
+                        if (ob is DateTime dt)
+                        {
+                            return new DateTimeOffset(dt).ToUnixTimeSeconds();
+                        }
+                        return Convert.ToInt32(convertible);
+                    }
+
+                    if (t1 == typeof(long))
+                    {
+                        if (ob is DateTime dt)
+                        {
+                            return new DateTimeOffset(dt).ToUnixTimeSeconds();
+                        }
+                        return Convert.ToInt64(convertible);
+                    }
+
+                    // Fallback: use Convert.ChangeType for other supported types
+                    return Convert.ChangeType(ob, t1);
+                }
+                catch (FormatException ex)
+                {
+                    Logger.Error($"Format error in getDBValue: Field={fieldName}, Value={convertible}, TargetType={t1}");
+                    throw ex;
+                }
+                catch (InvalidCastException ex)
+                {
+                    Logger.Error($"Invalid cast in getDBValue: Field={fieldName}, Value={convertible}, TargetType={t1}");
+                    throw ex;
+                }
+                catch (OverflowException ex)
+                {
+                    Logger.Error($"Overflow in getDBValue: Field={fieldName}, Value={convertible}, TargetType={t1}");
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unexpected error in getDBValue: Field={fieldName}, Value={convertible}, TargetType={t1}");
+                    throw ex;
+                }
             }
+
             return null;
         }
         public string varchar_to_utf8(string varcharData)
@@ -462,20 +490,20 @@ namespace csharp_lib.baseLib
             string utf8String = Encoding.UTF8.GetString(utf8Bytes);
             return utf8String;
         }
-        public bool getDBValue<T>(SqlDataReader rdr,string fieldName, ref T t1,string outKeyName)
+        public bool getDBValue<T>(SqlDataReader rdr, string fieldName, ref T t1, string outKeyName)
         {
             //2016-12-12 12:11:20,
             var ob = rdr[fieldName];
             if (ob == null || ob == DBNull.Value)
             {
-                return false ;
+                return false;
             }
             var value = string.Format("{0}", ob);
             try
             {
                 if (typeof(T) == typeof(string))
                 {
-                    if(ob.GetType() == typeof(System.DateTime))
+                    if (ob.GetType() == typeof(System.DateTime))
                     {
                         DateTime otime = Convert.ToDateTime(ob);
                         t1 = (T)(object)otime.ToString("yyyy-MM-dd HH:mm:ss");
@@ -506,7 +534,7 @@ namespace csharp_lib.baseLib
                 throw ex;
                 return false;
             }
-            return true ;
+            return true;
         }
         public void getDBValue<T>(object ob, ref T t1)
         {
@@ -539,14 +567,14 @@ namespace csharp_lib.baseLib
         }
         public List<T> query<T>(string sql, int maxCount = 10) where T : new()
         {
-            if(!ConnectDB())
+            if (!ConnectDB())
             {
                 Logger.Error($"can not connect to DB");
                 throw new Exception($"can not connect to DB");
             }
             var dataList = new List<T>();
             try
-            {                
+            {
                 using (SqlDataReader rdr3_2_1 = this.ExecuteReader(sql.ToLower()))
                 {
                     while (rdr3_2_1.Read())
@@ -559,7 +587,8 @@ namespace csharp_lib.baseLib
                             {
                                 dataList.Add(item);
                             }
-                        }catch(Exception ex)
+                        }
+                        catch (Exception ex)
                         {
                             Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
                         }
