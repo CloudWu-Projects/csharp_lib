@@ -428,6 +428,10 @@ namespace csharp_lib.baseLib
                     else
                         return (object)value;
                 }
+                else if (t1 == typeof(float) || t1==typeof(double))
+                {
+                    return (object)float.Parse(value);
+                }
                 else if (t1 == typeof(int) || t1 == typeof(long))
                 {
                     if (ob.GetType() == typeof(System.DateTime))
