@@ -572,6 +572,11 @@ namespace csharp_lib.baseLib
                 Logger.Error($"can not connect to DB");
                 throw new Exception($"can not connect to DB");
             }
+            if(sql.All(char.IsWhiteSpace) || string.IsNullOrEmpty(sql))
+            {
+                Logger.Error($"query####[{typeof(T)}] query sql is empty or whitespace: {sql}");
+                return new List<T>();
+            }
             var dataList = new List<T>();
             try
             {
@@ -590,7 +595,7 @@ namespace csharp_lib.baseLib
                         }
                         catch (Exception ex)
                         {
-                            Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
+                            Logger?.Error($"fetchDBValues exception {ex.Message}\n{ex.StackTrace}");
                         }
                         if (dataList.Count > maxCount)
                         {
@@ -603,8 +608,8 @@ namespace csharp_lib.baseLib
             catch (Exception ex)
             {
                 isConnected = false;
-                Logger?.Error($"exception {ex.Message}\n{ex.StackTrace}");
-                Logger?.Error(sql);
+                Logger?.Error($"SqlDataReaderexception {ex.Message}\n{ex.StackTrace}");
+                Logger?.Error($"sql:\n {sql}");
             }
             Logger?.Debug($"query####[{typeof(T)}]##### count {dataList.Count()}");
             return dataList;
