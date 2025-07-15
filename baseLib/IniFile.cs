@@ -85,10 +85,10 @@ namespace csharp_lib.baseLib
             int count = GetPrivateProfileString(getBytes(section), getBytes(key), getBytes(defaultValue), buffer, 1024, this.Path);
             return Encoding.GetEncoding("utf-8").GetString(buffer, 0, count).Trim();
         }
-        public string IniReadValue<T>(string section, string key, T defaultValue )
-        {
-           return IniReadValue(section, key, defaultValue.ToString());
-        }
+        //public string IniReadValue<T>(string section, string key, T defaultValue )
+        //{
+        //   return IniReadValue(section, key, defaultValue.ToString());
+        //}
         public T IniReadValueT<T>(string section, string key, T defaultValue)
         {
             if (typeof(T) == typeof(int))
@@ -97,13 +97,33 @@ namespace csharp_lib.baseLib
             }
             else if(typeof(T) == typeof(TimeSpan))
             {
-                return (T)(object)TimeSpan.Parse(IniReadValue(section, key, defaultValue.ToString()));
+                TimeSpan tempValue = defaultValue as TimeSpan? ?? TimeSpan.Zero;
+                return (T)(object)TimeSpan.Parse(IniReadValue(section, key, tempValue.TotalSeconds.ToString()));
             }
             return (T)(object)IniReadValue(section, key, defaultValue.ToString());
         }
+        public T IniReadValueT2<T>(string section, string key, T defaultValue,Type valueType)
+        {
+            if (valueType == typeof(int))
+            {
+                return (T)(object)int.Parse(IniReadValue(section, key, defaultValue.ToString()));
+            }
+            else if (valueType == typeof(bool))
+            {
+                var readValue = IniReadValue(section, key, defaultValue.ToString());
+
+                return (T)(object)(readValue.ToLower()== "true");
+            }
+            else if (valueType == typeof(TimeSpan))
+            {
+                TimeSpan tempValue = defaultValue as TimeSpan? ?? TimeSpan.Zero;
+                return (T)(object)TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section, key, tempValue.TotalSeconds.ToString())));
+            }
+            return (T)(object)IniReadValue(section, key, defaultValue?.ToString());
+        }
         public TimeSpan IniReadValue(string section,string key,TimeSpan defaultValue)
         {
-             return  TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section,key, defaultValue.TotalSeconds)));
+             return  TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section,key, defaultValue.TotalSeconds.ToString())));
         }
     }
 }
