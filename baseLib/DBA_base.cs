@@ -365,9 +365,14 @@ namespace csharp_lib.baseLib
             throw new Exception($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
             return false;
         }
-        public bool fetchDBValues<T>(SqlDataReader reader, ref T t)
+        public bool fetchDBValues<T>(SqlDataReader reader, ref T t,bool DeclaredOnly)
         {
-            var properties = typeof(T).GetProperties();
+            var flags = BindingFlags.Public | BindingFlags.Instance ;
+            if(DeclaredOnly)
+                flags |= BindingFlags.DeclaredOnly;
+
+            var properties = typeof(T).GetProperties( flags);
+
             foreach (var property in properties)
             {
                 var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
@@ -565,7 +570,19 @@ namespace csharp_lib.baseLib
                 throw ex;
             }
         }
+        public List<T> queryDeclaredOnly<T>(string sql,  int maxCount = 10) where T : new()
+        {
+            return query<T>(sql, false, maxCount);
+        }
+        public List<T> queryDeclared<T>(string sql, int maxCount = 10) where T : new()
+        {
+            return query<T>(sql, true, maxCount);
+        }
         public List<T> query<T>(string sql, int maxCount = 10) where T : new()
+        {
+            return query<T>(sql, true, maxCount);
+        }
+        List<T> query<T>(string sql, bool DeclaredOnly = false, int maxCount = 10) where T : new()
         {
             if (!ConnectDB())
             {
@@ -588,7 +605,7 @@ namespace csharp_lib.baseLib
                         var item = new T();
                         try
                         {
-                            if (this.fetchDBValues(rdr3_2_1, ref item))
+                            if (this.fetchDBValues(rdr3_2_1, ref item,DeclaredOnly))
                             {
                                 dataList.Add(item);
                             }
