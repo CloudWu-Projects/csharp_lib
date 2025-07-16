@@ -572,11 +572,11 @@ namespace csharp_lib.baseLib
         }
         public List<T> queryDeclaredOnly<T>(string sql,  int maxCount = 10) where T : new()
         {
-            return query<T>(sql, false, maxCount);
+            return query<T>(sql, true, maxCount);
         }
         public List<T> queryDeclared<T>(string sql, int maxCount = 10) where T : new()
         {
-            return query<T>(sql, true, maxCount);
+            return query<T>(sql, false, maxCount);
         }
         public List<T> query<T>(string sql, int maxCount = 10) where T : new()
         {
