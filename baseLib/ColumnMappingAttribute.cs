@@ -7,20 +7,26 @@ using System.Threading.Tasks;
 namespace wu_jiaxing20220115
 {
     class Template
-    {       
+    {
         [ColumnMapping("incodenumber")]
-        public string gateNo_in {get;set; }    
+        public string gateNo_in { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public sealed class ColumnMappingAttribute:Attribute
+    public sealed class ColumnMappingAttribute : Attribute
     {
-        public string ColumnName { get; set; }
-        public ColumnMappingAttribute() { 
-        }
+        public string ColumnName { get; }
+        public int Order { get; }
+
         public ColumnMappingAttribute(string columnName)
+        : this(columnName, -1)
         {
             ColumnName = columnName;
+        }
+        public ColumnMappingAttribute(string columnName, int order)
+        {
+            ColumnName = columnName;
+            Order = order;
         }
     }
 }
