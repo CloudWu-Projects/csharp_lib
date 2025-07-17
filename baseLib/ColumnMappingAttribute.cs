@@ -21,7 +21,12 @@ namespace wu_jiaxing20220115
         public ColumnMappingAttribute(string columnName)
         : this(columnName, -1)
         {
-            ColumnName = columnName;
+        }
+
+        public ColumnMappingAttribute(int order)
+        : this(null, order)
+        {
+            
         }
         public ColumnMappingAttribute(string columnName, int order)
         {
