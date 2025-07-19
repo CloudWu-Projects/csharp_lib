@@ -60,7 +60,7 @@ def Build():
     import datetime
     now = datetime.datetime.now()
     curversion=f"{now.year}.{now.month}.{now.day}"
-    dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}  --version-suffix {shortHash} -r win-x86 --self-contained false -p:PublishSingleFile=true'
+    dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}   -r win-x86 --self-contained false -p:PublishSingleFile=true'
     print(dotnetCommand)
     
     a =os.system(dotnetCommand)

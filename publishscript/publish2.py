@@ -52,8 +52,10 @@ try:
     shutil.rmtree(PublishDir)
 except:
     pass
-
-dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} --version-suffix {shortHash} -r win-x86 --self-contained false -p:PublishSingleFile=true'
+import datetime
+now = datetime.datetime.now()
+curversion=f"{now.year}.{now.month}.{now.day}"
+dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}   -r win-x86 --self-contained false -p:PublishSingleFile=true'
 
 a =os.system(dotnetCommand)
 print(a)
