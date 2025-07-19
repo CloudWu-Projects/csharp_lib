@@ -48,6 +48,7 @@ print(projectName)
 PublishDir=os.path.join(slnFolder,'bin','publish')
 
 print(PublishDir)
+print(shortHash)
 
 def Build():
     import shutil
@@ -56,9 +57,11 @@ def Build():
     except:
         pass
 
-    dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} --version-suffix {shortHash} -r win-x86 --self-contained false -p:PublishSingleFile=true'
-
+    dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix=2.1.5  --version-suffix {shortHash} -r win-x86 --self-contained false -p:PublishSingleFile=true'
+    print(dotnetCommand)
+    
     a =os.system(dotnetCommand)
+    exit(0)
     return a
 
 import os,io
