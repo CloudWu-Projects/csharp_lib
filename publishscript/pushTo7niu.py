@@ -61,7 +61,6 @@ def Build():
     print(dotnetCommand)
     
     a =os.system(dotnetCommand)
-    exit(0)
     return a
 
 import os,io
