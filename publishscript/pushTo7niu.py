@@ -59,7 +59,8 @@ def Build():
     #form systemtime  get  yyyy mm dd
     import datetime
     now = datetime.datetime.now()
-    curversion=f"{now.year}.{now.month}.{now.day}"
+    curversion=now.strftime("%Y.%m%d.%H%M%S")
+    print(curversion)
     dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}   -r win-x86 --self-contained false -p:PublishSingleFile=true'
     print(dotnetCommand)
     
