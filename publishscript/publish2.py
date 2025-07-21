@@ -54,7 +54,7 @@ except:
     pass
 import datetime
 now = datetime.datetime.now()
-curversion=now.strftime("%Y.%m%d.%H%M%S")
+curversion=now.strftime("%Y.%m%d.%H%M")
 dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}   -r win-x86 --self-contained false -p:PublishSingleFile=true'
 
 a =os.system(dotnetCommand)

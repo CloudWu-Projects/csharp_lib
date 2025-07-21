@@ -59,12 +59,14 @@ def Build():
     #form systemtime  get  yyyy mm dd
     import datetime
     now = datetime.datetime.now()
-    curversion=now.strftime("%Y.%m%d.%H%M%S")
+    curversion=now.strftime("%Y.%m%d.%H%M")
+    #curversion="1.0.0"
     print(curversion)
     dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}   -r win-x86 --self-contained false -p:PublishSingleFile=true'
     print(dotnetCommand)
     
     a =os.system(dotnetCommand)
+    print("version:",curversion)
     return a
 
 import os,io
@@ -129,6 +131,8 @@ def ZipFolder(folderPath,projectDir):
     return publishZipPath
 
 a =Build()
+print("build result:",a )
+
 if a==0:
     print('publish success')
     zipPath = ZipFolder(PublishDir,gitFolder)
