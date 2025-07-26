@@ -7,28 +7,40 @@ namespace MainAPP.csharp_lib.baseLib
 {
     public static class Serialize
     {
-        private static readonly JsonSerializerOptions _obj1 = new JsonSerializerOptions
+        #region Json_serialization
+        #region Json_serialization_options
+        private static readonly JsonSerializerOptions DefaultDeserializeOptions = new()
         {
             PropertyNameCaseInsensitive = true,
             IncludeFields = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
-        private static readonly JsonSerializerOptions _obj2 = new JsonSerializerOptions
+
+        private static readonly JsonSerializerOptions PropertyOnlyOptions = new(DefaultDeserializeOptions)
         {
-            PropertyNameCaseInsensitive = true,    // 属性名不区分大小写
-            IncludeFields = false,                 // 不序列化字段（仅处理属性）
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping  // 宽松的JSON字符转义
+            IncludeFields = false
         };
-        private static readonly JsonSerializerOptions _json1 = new JsonSerializerOptions
+
+        private static readonly JsonSerializerOptions PrettyPrintOptions = new()
         {
             WriteIndented = true,
             IncludeFields = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
-        public static TObject ToObject<TObject>(this string str) => JsonSerializer.Deserialize<TObject>(str, _obj1);
-       
-        public static string ToJsonWithFormat<TObject>(this TObject obj) => JsonSerializer.Serialize(obj, _json1);
+        #endregion
+        public static TObject ToObject<TObject>(this string json) =>
+            JsonSerializer.Deserialize<TObject>(json, DefaultDeserializeOptions);
 
+        public static TObject ToObject<TObject>(this string json, bool includeFields) =>
+            JsonSerializer.Deserialize<TObject>(json,
+                includeFields ? DefaultDeserializeOptions : PropertyOnlyOptions);
+
+        public static string ToJsonWithFormat<TObject>(this TObject obj) => JsonSerializer.Serialize(obj, PrettyPrintOptions);
+
+        #endregion
+
+
+        #region Xml_serialization
         public static TObject ToObjectFromXml<TObject>(this string str) where TObject : class
         {
             using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(str)))
@@ -40,7 +52,7 @@ namespace MainAPP.csharp_lib.baseLib
             using (StreamReader streamReader = new StreamReader(filePath, Encoding.UTF8))
                 return new XmlSerializer(typeof(TObject)).Deserialize(streamReader) as TObject;
         }
-
+        #endregion
 
     }
 }
