@@ -65,7 +65,7 @@ def Build():
     dotnetCommand=f'dotnet publish {slnFolder} -c Release -p:PublishDir={PublishDir},AssemblyName={projectName} -p:VersionPrefix={curversion}   -r win-x86 --self-contained false -p:PublishSingleFile=true'
     print(dotnetCommand)
     
-    a =os.system(dotnetCommand)
+    a =os.system(dotnetCommand +"> nul 2>&1")
     print("version:",curversion)
     return a
 
