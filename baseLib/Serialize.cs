@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 namespace MainAPP.csharp_lib.baseLib
 {
@@ -34,6 +34,23 @@ namespace MainAPP.csharp_lib.baseLib
         public static TObject ToObject<TObject>(this string json, bool includeFields) =>
             JsonSerializer.Deserialize<TObject>(json,
                 includeFields ? DefaultDeserializeOptions : PropertyOnlyOptions);
+
+        public static TObject ToObject<TObject>(this string json,IList<JsonConverter> jsonConverters)
+        {
+            var options = new JsonSerializerOptions(DefaultDeserializeOptions)
+            {
+                Converters = { }
+            };
+            if (jsonConverters != null)
+            {
+                foreach (var converter in jsonConverters)
+                {
+                    options.Converters.Add(converter);
+                }
+            }
+            return JsonSerializer.Deserialize<TObject>(json, options);
+
+        }
 
         public static string ToJsonWithFormat<TObject>(this TObject obj) => JsonSerializer.Serialize(obj, PrettyPrintOptions);
 
