@@ -46,12 +46,12 @@ namespace csharp_lib.baseLib
     };
     public class ServerHelper
     {
-        HttpListener httpListener = null;
+        HttpListener httpListener = new HttpListener();
         MyLogger logger = MyLogger.GetLogger("ServerHelper");
-        Router router = null;
-        public ServerHelper(string url)
+        Router router = new Router();
+       
+         ServerHelper(string url)
         {
-            httpListener = new HttpListener();
             // httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
            // httpListener.Prefixes.Add(string.Format("http://*:{0}/", port));//如果发送到8080 端口没有被处理，则这里全部受理，+是全部接收
            if(!url.EndsWith("/")) 
@@ -63,7 +63,22 @@ namespace csharp_lib.baseLib
                 logger.Info($"startHttp server: {a.ToString()}");
                 logger.Info($"netsh http add urlacl url={a.ToString()} user=Everyone");
             }
-            router = new Router();
+        }
+        public ServerHelper(List<string> urls)
+        {
+            foreach (var urlA in urls)
+            {
+                string url = urlA;
+                if (!url.EndsWith("/"))
+                    url += "/";
+                httpListener.Prefixes.Add(url);
+            }
+            foreach (var a in httpListener.Prefixes)
+            {
+                //netsh http add urlacl url=http://+:8080/ user=Everyone
+                logger.Info($"startHttp server: {a.ToString()}");
+                logger.Info($"netsh http add urlacl url={a.ToString()} user=Everyone");
+            }
         }
         string defaultRouterHtml = "";
         public ServerHelper AddPostHandler(String param1, RouteAction param2)
