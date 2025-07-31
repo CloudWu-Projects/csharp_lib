@@ -2,8 +2,43 @@
 using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Reflection;
 namespace csharp_lib.baseLib
 {
+    public class AutoLoadValue
+    {
+        public static  void autoload<T>(T pthis,IniFile iniFile)
+        {
+            var properties = typeof(T).GetProperties();
+
+            foreach (var prop in properties)
+            {
+                var columnName = prop.Name;
+                object value = prop.GetValue(pthis);
+                Type propType = prop.PropertyType;
+                var aa = iniFile.IniReadValueT2("server", columnName, value, propType);
+                prop.SetValue(pthis, aa);
+            }
+            FieldInfo[] fields = typeof(T).GetFields(
+            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);//| BindingFlags.DeclaredOnly);
+            foreach (var field in fields)
+            {
+                // Console.WriteLine($"{field.Name}: {field.GetValue(new Person())}");
+                var dname = field.DeclaringType.Name;
+                Console.WriteLine(field.Name);
+                var columnName = field.Name;
+                object value = field.GetValue(pthis);
+                Type propType = field.FieldType;
+                if (propType != typeof(string) && propType != typeof(int) && propType != typeof(TimeSpan))
+                {
+                    Console.WriteLine($"field {field.Name} type {propType} not supported");
+                    continue;
+                }
+                var aa = iniFile.IniReadValueT2(dname.ToString(), columnName, value, propType);
+                field.SetValue(pthis, aa);
+            }
+        }
+    }
     /// <summary>
     /// INI文件的操作类
     /// </summary>
@@ -95,14 +130,14 @@ namespace csharp_lib.baseLib
             {
                 return (T)(object)int.Parse(IniReadValue(section, key, defaultValue.ToString()));
             }
-            else if(typeof(T) == typeof(TimeSpan))
+            else if (typeof(T) == typeof(TimeSpan))
             {
                 TimeSpan tempValue = defaultValue as TimeSpan? ?? TimeSpan.Zero;
                 return (T)(object)TimeSpan.Parse(IniReadValue(section, key, tempValue.TotalSeconds.ToString()));
             }
             return (T)(object)IniReadValue(section, key, defaultValue.ToString());
         }
-        public T IniReadValueT2<T>(string section, string key, T defaultValue,Type valueType)
+        public T IniReadValueT2<T>(string section, string key, T defaultValue, Type valueType)
         {
             if (valueType == typeof(int))
             {
@@ -112,7 +147,7 @@ namespace csharp_lib.baseLib
             {
                 var readValue = IniReadValue(section, key, defaultValue.ToString());
 
-                return (T)(object)(readValue.ToLower()== "true");
+                return (T)(object)(readValue.ToLower() == "true");
             }
             else if (valueType == typeof(TimeSpan))
             {
@@ -121,9 +156,9 @@ namespace csharp_lib.baseLib
             }
             return (T)(object)IniReadValue(section, key, defaultValue?.ToString());
         }
-        public TimeSpan IniReadValue(string section,string key,TimeSpan defaultValue)
+        public TimeSpan IniReadValue(string section, string key, TimeSpan defaultValue)
         {
-             return  TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section,key, defaultValue.TotalSeconds.ToString())));
+            return TimeSpan.FromSeconds(Int32.Parse(IniReadValue(section, key, defaultValue.TotalSeconds.ToString())));
         }
     }
 }
