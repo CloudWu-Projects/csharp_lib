@@ -580,7 +580,7 @@ namespace csharp_lib.baseLib
         }
         public List<T> query<T>(string sql, int maxCount = 10) where T : new()
         {
-            return query<T>(sql, true, maxCount);
+            return query<T>(sql, false, maxCount);
         }
         List<T> query<T>(string sql, bool DeclaredOnly = false, int maxCount = 10) where T : new()
         {
