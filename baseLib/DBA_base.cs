@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -58,7 +59,7 @@ namespace csharp_lib.baseLib
         }
         public void loadSQL(string dataSetItem, ref string output)
         {
-            var sqlFolder = $"{System.Environment.CurrentDirectory}/sql";
+            var sqlFolder = $"{Helper.GetCurrentDirectory()}/sql";
             var path = $"{sqlFolder}/{dataSetItem}.sql";
             Logger.Info($"SQL path: {path}");
             if (!System.IO.File.Exists(path))
@@ -78,6 +79,7 @@ namespace csharp_lib.baseLib
             string result = "";
             try
             {
+                Logger.Debug($"getFirstValue_bySQL sql \n {sql}");
                 using (var reader = ExecuteReader(sql))
                 {
                     if (reader.Read() && reader.HasRows)
@@ -594,6 +596,7 @@ namespace csharp_lib.baseLib
                 Logger.Error($"query####[{typeof(T)}] query sql is empty or whitespace: {sql}");
                 return new List<T>();
             }
+            Logger.Debug($"query####[{typeof(T)}]##### sql: {sql}");
             var dataList = new List<T>();
             try
             {

@@ -24,24 +24,27 @@ namespace csharp_lib.baseLib
         int curLogLevel = 0;
         public static MyLogger GetLogger(string className)
         {
-            if (!loggmap.ContainsKey(className))
+            lock (loggmap)
             {
-                var loo = new MyLogger();
-                loo._className = className;
-                loo.curLogLevel = HeiFei_20220103.Config.GetInstance().logLevel;
-                loggmap.Add(className, loo);
-                
-                
-            
-                var exePath=Process.GetCurrentProcess().MainModule.FileName;
-                
-                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
-                Console.WriteLine($"fileVersionInfo  {fileVersionInfo}");
-                string version = fileVersionInfo.ProductVersion;
-                loo.Error($"======start===={version}=================");
-                loo.Error($"======exePath===={exePath}=================");
+                if (!loggmap.ContainsKey(className))
+                {
+                    var loo = new MyLogger();
+                    loo._className = className;
+                    loo.curLogLevel = HeiFei_20220103.Config.GetInstance().logLevel;
+                    loggmap.Add(className, loo);
+
+
+
+                    var exePath = Process.GetCurrentProcess().MainModule.FileName;
+
+                    FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
+                    Console.WriteLine($"fileVersionInfo  {fileVersionInfo}");
+                    string version = fileVersionInfo.ProductVersion;
+                    loo.Error($"======start===={version}=================");
+                    loo.Error($"======exePath===={exePath}=================");
+                }
+                return loggmap[className];
             }
-            return loggmap[className];
         }
         protected bool disposedValue = false; // To detect redundant calls
         public virtual void Dispose()

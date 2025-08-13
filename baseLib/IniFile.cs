@@ -69,7 +69,7 @@ namespace csharp_lib.baseLib
 
         public IniFile()
         {
-            string _path = ".\\config.ini";
+            string _path = $".\\config.ini";
             this.Path = getBytes(_path);
             bWriteIni = (!System.IO.File.Exists(_path));
             if (System.IO.File.Exists(_path))
