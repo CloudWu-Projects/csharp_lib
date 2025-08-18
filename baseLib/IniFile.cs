@@ -18,7 +18,7 @@ namespace csharp_lib.baseLib
                 var columnName = prop.Name;
                 object value = prop.GetValue(pthis);
                 Type propType = prop.PropertyType;
-                var aa = iniFile.IniReadValueT2("server", columnName, value, propType);
+                var aa = iniFile.IniReadValueT2(dname, columnName, value, propType);
                 prop.SetValue(pthis, aa);
             }
             FieldInfo[] fields = typeof(T).GetFields(
