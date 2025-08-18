@@ -3,9 +3,10 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 namespace csharp_lib.baseLib
 {
-    public class AutoLoadValue
+    public static class AutoLoadValue
     {
         public static  void autoload<T>(T pthis,IniFile iniFile)
         {
@@ -13,6 +14,7 @@ namespace csharp_lib.baseLib
 
             foreach (var prop in properties)
             {
+                var dname = prop.DeclaringType.Name;
                 var columnName = prop.Name;
                 object value = prop.GetValue(pthis);
                 Type propType = prop.PropertyType;
@@ -29,7 +31,11 @@ namespace csharp_lib.baseLib
                 var columnName = field.Name;
                 object value = field.GetValue(pthis);
                 Type propType = field.FieldType;
-                if (propType != typeof(string) && propType != typeof(int) && propType != typeof(TimeSpan))
+                if (propType != typeof(string) 
+                    && propType != typeof(int) 
+                    && propType != typeof(TimeSpan)
+                    && propType != typeof(Boolean)
+                    )
                 {
                     Console.WriteLine($"field {field.Name} type {propType} not supported");
                     continue;
@@ -37,6 +43,20 @@ namespace csharp_lib.baseLib
                 var aa = iniFile.IniReadValueT2(dname.ToString(), columnName, value, propType);
                 field.SetValue(pthis, aa);
             }
+        }
+        public static bool AutoLoadX<T>(this IniFile iniFile,T pValue)
+        {
+            try
+            {
+                autoload<T>(pValue, iniFile);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"AutoLoad Exception:{ex.Message}");
+                return false;
+            }
+            return false;
         }
     }
     /// <summary>
@@ -143,7 +163,7 @@ namespace csharp_lib.baseLib
             {
                 return (T)(object)int.Parse(IniReadValue(section, key, defaultValue.ToString()));
             }
-            else if (valueType == typeof(bool))
+            else if (valueType == typeof(Boolean) || valueType == typeof(bool))
             {
                 var readValue = IniReadValue(section, key, defaultValue.ToString());
 
