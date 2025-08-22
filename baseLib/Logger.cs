@@ -96,7 +96,10 @@ namespace csharp_lib.baseLib
                     if (File.Exists(path))
                     {
                         StreamWriter sw = new StreamWriter(path, true, System.Text.Encoding.Default);
-                        sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff ")+ $" {threadID} "+ (_className ?? "") + " : " + type + " --> " + content);
+                        sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+                        + $" {threadID} "
+                        //+ (_className ?? "") 
+                         + type[0] + " : " + content);
                         sw.Close();
                     }
                 }
