@@ -367,13 +367,12 @@ namespace csharp_lib.baseLib
             throw new Exception($"try_getDBValue {fieldName}  {outKeyName}={t1.ToString()}");
             return false;
         }
-        public bool fetchDBValues<T>(SqlDataReader reader, ref T t,bool DeclaredOnly)
+        void fillWithProperty<T>(SqlDataReader reader, ref T t, bool DeclaredOnly)
         {
-            var flags = BindingFlags.Public | BindingFlags.Instance ;
-            if(DeclaredOnly)
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            if (DeclaredOnly)
                 flags |= BindingFlags.DeclaredOnly;
-
-            var properties = typeof(T).GetProperties( flags);
+            var properties = typeof(T).GetProperties(flags);
 
             foreach (var property in properties)
             {
@@ -409,8 +408,55 @@ namespace csharp_lib.baseLib
                 catch (IndexOutOfRangeException ex)
                 {
                 }
-
             }
+        }
+        void fillWithFields<T>(SqlDataReader reader, ref T t, bool DeclaredOnly)
+        {
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            if (DeclaredOnly)
+                flags |= BindingFlags.DeclaredOnly;
+            var properties = typeof(T).GetFields(flags);
+
+            foreach (var property in properties)
+            {
+                var attribute = property.GetCustomAttribute<ColumnMappingAttribute>();
+                var columnName = attribute?.ColumnName;// ?? property.Name;
+                if (columnName != null)
+                {
+                    columnName = columnName.ToLower();
+                    if (reader[columnName] != DBNull.Value)
+                    {
+                        object value = getDBValue(reader, columnName, property.FieldType);// property.PropertyType);
+
+                        property.SetValue(t, value);
+                        continue;
+                    }
+
+                }
+
+                columnName = property.Name.ToLower();
+
+                try
+                {
+                    if (reader.GetOrdinal(columnName) != -1)
+                    {
+                        if (reader[columnName] != DBNull.Value)
+                        {
+                            object value = getDBValue(reader, columnName, property.FieldType);
+
+                            property.SetValue(t, value);
+                        }
+                    }
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                }
+            }
+        }
+        public bool  fetchDBValues<T>(SqlDataReader reader, ref T t,bool DeclaredOnly)
+        {
+            fillWithProperty(reader, ref t, DeclaredOnly);
+            fillWithFields(reader, ref t, DeclaredOnly);
             return true;
         }
         object getDBValue(SqlDataReader rdr, string fieldName, Type t1)
