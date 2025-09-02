@@ -53,7 +53,7 @@ namespace csharp_lib.baseLib
         //private static extern int GetPrivateProfileString(byte[] section, byte[] key, byte[] defVal, byte[] retVal, int size, string filePath);
         //[DllImport("kernel32", CharSet=CharSet.Unicode)]
         //private static extern int GetPrivateProfileString(string section, string key, string defVal, Byte[] retVal, int size, string filePath);
-        [DllImport("kernel32")] public static extern bool WritePrivateProfileString(byte[] section, byte[] key, byte[] val, byte[] filePath);
+        [DllImport("kernel32")] public static extern bool WritePrivateProfileString(byte[] section, byte[] key, byte[] val, string filePath);
         [DllImport("kernel32")] public static extern int GetPrivateProfileString(byte[] section, byte[] key, byte[] def, byte[] retVal, int size, string filePath);
         #endregion
         /// <summary>
@@ -67,7 +67,7 @@ namespace csharp_lib.baseLib
             var sec = getBytes(section);
             var keya = getBytes(key);
             var value = getBytes(iValue);
-            WritePrivateProfileString(sec, keya, value, this.Path);
+            WritePrivateProfileString(sec, keya, value, this.sPath);
         }
         private static byte[] getBytes(string s, string encodingName = "utf-8")
         {
