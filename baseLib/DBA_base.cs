@@ -642,7 +642,7 @@ namespace csharp_lib.baseLib
                 Logger.Error($"query####[{typeof(T)}] query sql is empty or whitespace: {sql}");
                 return new List<T>();
             }
-            Logger.Debug($"query####[{typeof(T)}]##### sql: {sql}");
+            //Logger.Debug($"query####[{typeof(T)}]##### sql: {sql}");
             var dataList = new List<T>();
             try
             {
