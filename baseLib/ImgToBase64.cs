@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 namespace csharp_lib.baseLib
 {
-    class ImgToBase64
+    public class ImgToBase64
     {
         static public string toBase64String(string ImageFileName, MyLogger logger)
         {

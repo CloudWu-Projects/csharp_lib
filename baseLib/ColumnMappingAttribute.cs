@@ -12,7 +12,7 @@ namespace wu_jiaxing20220115
         public string gateNo_in { get; set; }
     }
 
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property| AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public sealed class ColumnMappingAttribute : Attribute
     {
         public string ColumnName { get; }
