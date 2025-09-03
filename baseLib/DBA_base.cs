@@ -424,12 +424,15 @@ namespace csharp_lib.baseLib
                 if (columnName != null)
                 {
                     columnName = columnName.ToLower();
-                    if (reader[columnName] != DBNull.Value)
+                    if (reader.GetOrdinal(columnName) != -1)
                     {
-                        object value = getDBValue(reader, columnName, property.FieldType);// property.PropertyType);
+                        if (reader[columnName] != DBNull.Value)
+                        {
+                            object value = getDBValue(reader, columnName, property.FieldType);// property.PropertyType);
 
-                        property.SetValue(t, value);
-                        continue;
+                            property.SetValue(t, value);
+                            continue;
+                        }
                     }
 
                 }
