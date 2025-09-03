@@ -677,7 +677,7 @@ namespace csharp_lib.baseLib
                 Logger?.Error($"SqlDataReaderexception {ex.Message}\n{ex.StackTrace}");
                 Logger?.Error($"sql:\n {sql}");
             }
-            Logger?.Debug($"query####[{typeof(T)}]##### count {dataList.Count()}");
+            //Logger?.Debug($"query####[{typeof(T)}]##### count {dataList.Count()}");
             return dataList;
         }
 
