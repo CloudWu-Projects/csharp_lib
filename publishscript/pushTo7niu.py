@@ -140,4 +140,5 @@ if a==0:
     import upload_7niu
     upload_7niu.upload(zipPath,key=f"{projectName}/{projectName}.zip")
          #  args.localfile,key=f"{args.filename}/{args.filename}.zip")
-    print('send success')
+    import datetime
+    print('send success',datetime.datetime.now())
