@@ -132,7 +132,9 @@ def ZipFolder(folderPath,projectDir):
 
 a =Build()
 print("build result:",a )
-
+if a!=0:
+    print("build failed.")
+    exit(0)
 if a==0:
     print('publish success')
     zipPath = ZipFolder(PublishDir,gitFolder)
