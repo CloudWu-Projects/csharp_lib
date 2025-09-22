@@ -52,7 +52,7 @@ namespace MainAPP.csharp_lib.baseLib
 
         }
 
-        public static string ToJsonWithFormat<TObject>(this TObject obj) => JsonSerializer.Serialize(obj, DefaultDeserializeOptions);
+        public static string ToJsonWithFormat<TObject>(this TObject obj) => JsonSerializer.Serialize(obj, PropertyOnlyOptions);
 
         #endregion
 
