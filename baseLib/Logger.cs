@@ -24,13 +24,17 @@ namespace csharp_lib.baseLib
         int curLogLevel = 0;
         public static MyLogger GetLogger(string className)
         {
+            return GetLogger(className, HeiFei_20220103.Config.GetInstance().logLevel);
+        }
+        public static MyLogger GetLogger(string className,int loggerLevel)
+        {
             lock (loggmap)
             {
                 if (!loggmap.ContainsKey(className))
                 {
                     var loo = new MyLogger();
                     loo._className = className;
-                    loo.curLogLevel = HeiFei_20220103.Config.GetInstance().logLevel;
+                    loo.curLogLevel = loggerLevel;
                     loggmap.Add(className, loo);
 
 
