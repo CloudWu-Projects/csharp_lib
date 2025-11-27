@@ -26,6 +26,31 @@ namespace csharp_lib.baseLib
                 throw ex;
             }
         }
+
+        static public Image CompressImageWithQuality(string originalJpegPath, int quality)
+        {
+            using (Image oi = Image.FromFile(originalJpegPath))
+            {
+                return ImgToBase64.CompressImageWithQuality(oi, quality, ImageFormat.Jpeg);
+            }
+        }
+        static public Image CompressImageWithQuality(Image image, long quality, ImageFormat format)
+        {
+            // 获取编码器
+            ImageCodecInfo encoder = GetEncoder(format);
+            if (encoder == null)
+                throw new NotSupportedException($"No encoder found for format: {format}");
+
+            // 设置编码参数
+            EncoderParameters encoderParams = new EncoderParameters(1);
+            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, encoder, encoderParams);
+                return Image.FromStream(new MemoryStream(ms.ToArray()));
+            }
+        }
         public static string ConvertImageToBase64WithQuality(string imagePath, long quality, MyLogger logger)
         {
             try
@@ -57,6 +82,9 @@ namespace csharp_lib.baseLib
             }
             return null;
         }
+
+
+
 
 
         // 获取指定图像格式的编码器
@@ -93,6 +121,24 @@ namespace csharp_lib.baseLib
             catch (Exception ex)
             {
 
+            }
+            return null;
+        }
+        public static byte[] CompressImage(string sourcePath, int maxBit = 300 * 1024)
+        {
+            var img = Image.FromFile(sourcePath);
+            for (int quality = 90; quality > 0; quality -= 10)
+            {
+                var compressedImg = ImgToBase64.CompressImageWithQuality(img, quality, System.Drawing.Imaging.ImageFormat.Jpeg);
+                using (var ms = new MemoryStream())
+                {
+                    compressedImg.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    if (ms.Length < maxBit)
+                    {
+                        return ms.ToArray();
+                    }
+                }
+                img = compressedImg;
             }
             return null;
         }
