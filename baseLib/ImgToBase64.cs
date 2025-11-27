@@ -126,21 +126,44 @@ namespace csharp_lib.baseLib
         }
         public static byte[] CompressImage(string sourcePath, int maxBit = 300 * 1024)
         {
-            var img = Image.FromFile(sourcePath);
-            for (int quality = 90; quality > 0; quality -= 10)
+            if (sourcePath == null) throw new ArgumentNullException(nameof(sourcePath));
+            if (!File.Exists(sourcePath)) throw new FileNotFoundException("Source image not found", sourcePath);
+            // Read original bytes as the initial input for iterative compression
+            byte[] currentBytes = File.ReadAllBytes(sourcePath);
+            byte[] lastResult = currentBytes;
+
+            // Iteratively compress the last-compressed bytes
+            List<int> qualityList = new List<int> { 90,80,70,60,50,40,30,20,10,9,8,7,6,5,4,3,2,1};
+            foreach (var quality in qualityList)
             {
-                var compressedImg = ImgToBase64.CompressImageWithQuality(img, quality, System.Drawing.Imaging.ImageFormat.Jpeg);
-                using (var ms = new MemoryStream())
+                using (var inStream = new MemoryStream(currentBytes))
+                using (var img = Image.FromStream(inStream))
                 {
-                    compressedImg.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    if (ms.Length < maxBit)
+                    ImageCodecInfo encoder = GetEncoder(ImageFormat.Jpeg);
+                    if (encoder == null)
+                        throw new NotSupportedException("No encoder found for JPEG format.");
+
+                    EncoderParameters encoderParams = new EncoderParameters(1);
+                    encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)quality);
+
+                    using (var outStream = new MemoryStream())
                     {
-                        return ms.ToArray();
+                        img.Save(outStream, encoder, encoderParams);
+                        byte[] newBytes = outStream.ToArray();
+                        lastResult = newBytes;
+                        if (newBytes.Length <= maxBit)
+                        {
+                            return newBytes;
+                        }
+                        // continue compressing the last result
+                        currentBytes = newBytes;
+                        File.WriteAllBytes(@$"{sourcePath}_{quality}.jpg", newBytes);
                     }
                 }
-                img = compressedImg;
             }
-            return null;
+
+            // Return best-effort result (never null)
+            return lastResult ?? File.ReadAllBytes(sourcePath);
         }
         public static string Crop_and_Base64String(string ImageFileName, int cropLeft, int cropTop, int cropRight, int cropBottom)
         {
