@@ -15,9 +15,8 @@ internal class StringHelper
         List<string> list = new List<string>();
         if (index != -1)
         {
-            list.Add(fullWord.Substring(index + 1));
-            fullWord = fullWord.Substring(0, index + 1);
-            list.Add(fullWord);
+            list.Add(fullWord.Substring(0, index + 1));
+            list.Add(fullWord.Substring(index + 1));            
         }
         return list;
     }
