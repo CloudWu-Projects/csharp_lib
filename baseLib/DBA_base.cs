@@ -666,7 +666,7 @@ namespace csharp_lib.baseLib
                         {
                             Logger?.Error($"fetchDBValues exception {ex.Message}\n{ex.StackTrace}");
                         }
-                        if (dataList.Count > maxCount)
+                        if (maxCount>0 && dataList.Count > maxCount)
                         {
                             break;
                         }
