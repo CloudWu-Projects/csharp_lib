@@ -157,7 +157,7 @@ namespace csharp_lib.baseLib
                         }
                         // continue compressing the last result
                         currentBytes = newBytes;
-                        File.WriteAllBytes(@$"{sourcePath}_{quality}.jpg", newBytes);
+                        //File.WriteAllBytes(@$"{sourcePath}_{quality}.jpg", newBytes);
                     }
                 }
             }
