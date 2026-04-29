@@ -231,6 +231,33 @@ namespace csharp_lib.baseLib
             return "";
         }
 
+        public int ExecuteNonQuery_withParams(string sql, Dictionary<string, object> parameters)
+        {
+            if (!ConnectDB())
+            {
+                Logger.Error($"can not connect to DB");
+                throw new Exception($"can not connect to DB");
+            }
+            try
+            {
+                Logger.Debug($"ExecuteNonQuery_withParams sql  {sql} params: {string.Join(", ", parameters.Select(kv => $"{kv.Key}={kv.Value}"))}");
+                using var cmd = new SqlCommand(sql, conn);
+                foreach (var kv in parameters)
+                {
+                    cmd.Parameters.AddWithValue(kv.Key, kv.Value ?? DBNull.Value);
+                }
+                int i = cmd.ExecuteNonQuery();
+                Logger.Debug($"ExecuteNonQuery_withParams={i} [{sql}]");
+                return i;
+            }
+            catch (Exception ex)
+            {
+                isConnected = false;
+                Logger.Error($"ExecuteNonQuery_withParams exception \n {ex.Message}\n {ex.StackTrace}");
+                throw;
+            }
+        }
+
         public int ExcuteNonQuery(string sql)
         {
             if (!ConnectDB())
@@ -242,7 +269,7 @@ namespace csharp_lib.baseLib
             {
                 Logger.Debug($"ExcuteNonQuery sql  {sql}");
                 using var cmd = new SqlCommand(sql, conn);
-                int i = cmd.ExecuteNonQuery();
+                int i = cmd.ExecuteNonQuery();                
                 Logger.Debug($"ExcuteNonQuery={i} [{sql}]");
                 return i;
             }
