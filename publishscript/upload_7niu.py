@@ -29,18 +29,21 @@ def upload(localfile,key=None):
     
 
     ret, info = put_file(token, key, localfile, version='v2')
-    print("ret",ret)
-    print("info",info)
+    print("ret:\n",ret)
+    print("info:\n",info.text_body)
     print("----")
-    print(info.url)
+    #print(info.url)
     assert ret['key'] == key
     assert ret['hash'] == etag(localfile)
     urls = ['http://7niu.hyman.store/'+key]
     cdn_manager = CdnManager(q)
     refresh_url_result = cdn_manager.refresh_urls(urls)
-    print(refresh_url_result[0])
+    #print("refresh_url_result:", refresh_url_result[0])
     r=refresh_url_result[1]
-    print(r)
+    import json
+    #print("r:\n", r)
+    print("r.body:\n")
+    print(json.dumps(r.text_body,indent=4))
     assert r.status_code==200
     # 刷新目录
 

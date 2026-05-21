@@ -26,6 +26,17 @@ namespace csharp_lib.baseLib
         {
             return GetLogger(className, HeiFei_20220103.Config.GetInstance().logLevel);
         }
+        public static void shutdown()
+        {
+            lock (loggmap)
+            {
+                foreach(var log in loggmap)
+                {
+                    log.Value.Dispose();
+                }
+                loggmap.Clear();
+            }
+        }
         public static MyLogger GetLogger(string className,int loggerLevel)
         {
             lock (loggmap)
@@ -120,6 +131,7 @@ namespace csharp_lib.baseLib
         protected readonly AutoResetEvent _msgARE = new AutoResetEvent(false);
         private void Log(string type, string content)
         {
+            if (_msgQueue == null) return;
             _msgQueue.Enqueue(new LogMsg { type = type, content = content });
             _msgARE.Set();
         }
