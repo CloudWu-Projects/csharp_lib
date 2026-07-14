@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 internal class StringHelper  
 {
     public static List<string> find_chinese(string fullWord)

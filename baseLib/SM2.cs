@@ -7,6 +7,8 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities.Encoders;
+using System;
+using System.IO;
 using System.Numerics;
 using System.Text;
 

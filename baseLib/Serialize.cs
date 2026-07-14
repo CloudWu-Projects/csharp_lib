@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -62,7 +64,7 @@ namespace MainAPP.csharp_lib.baseLib
         #region Xml_serialization
         public static TObject ToObjectFromXml<TObject>(this string str) where TObject : class
         {
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(str)))
+            using (System.IO.MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(str)))
                 return new XmlSerializer(typeof(TObject)).Deserialize(memoryStream) as TObject;
         }
 
