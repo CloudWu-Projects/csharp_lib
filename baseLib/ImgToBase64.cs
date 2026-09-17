@@ -83,6 +83,77 @@ namespace csharp_lib.baseLib
             }
             return null;
         }
+        /// <summary>
+        /// 将任意格式图片转为 JPEG 并返回 Base64 字符串
+        /// </summary>
+        /// <param name="filePath">源文件路径</param>
+        /// <param name="quality">JPEG 质量 0-100，默认 90</param>
+        /// <param name="withDataUriPrefix">是否带 data:image/jpeg;base64, 前缀</param>
+        /// <param name="logger">日志（可空）</param>
+        public static string ConvertImageToJpegBase64(
+            string filePath,
+            long quality = 90L,
+            bool withDataUriPrefix = true,
+            MyLogger logger = null)
+        {
+            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+            {
+                logger?.Error($"ConvertImageToJpegBase64: file not found. {filePath}");
+                return null;
+            }
+
+            try
+            {
+                // 1. 先读成 byte[]，避免 Image.FromFile 锁定文件
+                byte[] rawBytes = File.ReadAllBytes(filePath);
+
+                using (var msInput = new MemoryStream(rawBytes))
+                using (var originalImage = Image.FromStream(msInput))
+                {
+                    // 2. 获取 JPEG 编码器
+                    var jpegEncoder = ImageCodecInfo.GetImageEncoders()
+                        .FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
+
+                    if (jpegEncoder == null)
+                    {
+                        logger?.Error("ConvertImageToJpegBase64: JPEG encoder not found.");
+                        return null;
+                    }
+
+                    // 3. 处理透明背景 → 白底（PNG/WebP 转 JPEG 必须）
+                    using (var bitmap = new Bitmap(originalImage.Width, originalImage.Height))
+                    {
+                        using (var g = Graphics.FromImage(bitmap))
+                        {
+                            g.Clear(Color.White);   // 透明区域填充白色
+                            g.DrawImage(originalImage, 0, 0, originalImage.Width, originalImage.Height);
+                        }
+
+                        // 4. 设置 JPEG 质量
+                        using (var encoderParams = new EncoderParameters(1))
+                        {
+                            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
+
+                            using (var msOutput = new MemoryStream())
+                            {
+                                bitmap.Save(msOutput, jpegEncoder, encoderParams);
+                                string base64 = Convert.ToBase64String(msOutput.ToArray());
+
+                                return withDataUriPrefix
+                                    ? "data:image/jpeg;base64," + base64
+                                    : base64;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.Error($"ConvertImageToJpegBase64 failed: {filePath}");
+                logger?.Error($"ConvertImageToJpegBase64 exception: {ex}");
+                return null;
+            }
+        }
 
 
 
@@ -134,7 +205,7 @@ namespace csharp_lib.baseLib
             byte[] lastResult = currentBytes;
 
             // Iteratively compress the last-compressed bytes
-            List<int> qualityList = new List<int> { 90,80,70,60,50,40,30,20,10,9,8,7,6,5,4,3,2,1};
+            List<int> qualityList = new List<int> { 90, 80, 70, 60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
             foreach (var quality in qualityList)
             {
                 using (var inStream = new MemoryStream(currentBytes))
